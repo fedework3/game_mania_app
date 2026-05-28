@@ -34,7 +34,7 @@ function LoginScreen() {
 
     try {
       const endpoint = type === 'login' ? '/api/login' : '/api/register';
-      const response = await fetch(`http://localhost:3000${endpoint}`, {
+      const response = await fetch(`https://game-mania-app.onrender.com${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })

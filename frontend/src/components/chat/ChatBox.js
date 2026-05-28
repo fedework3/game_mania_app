@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { io } from 'socket.io-client';
 import { AuthContext } from '../../context/AuthContext'; // contesto globale
 // Connessione socket isolata per questo componente
-const socket = io('http://localhost:3000');
+const socket = io('https://game-mania-app.onrender.com');
 
 function ChatBox() {
   const [chatMessage, setChatMessage] = useState('');

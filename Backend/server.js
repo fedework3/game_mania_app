@@ -12,7 +12,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3001",
+        origin: "https://game-mania-app-frontend.onrender.com",
         methods: ["GET", "POST"]
     }
 });
@@ -103,8 +103,7 @@ initChatHandler(io); // Attiviamo la chat passandogli il server socket io
 
 const PORT = process.env.PORT || 5000;
 
-server.listen(PORT, () => console.log(`Backend in esecuzione su http://localhost:${PORT}`));
+server.listen(PORT, () => {
+    console.log(`Backend in esecuzione sulla porta ${PORT}`);
 
-app.listen(PORT, () => {
-    console.log(`Server in ascolto sulla porta ${PORT}`);
 });
