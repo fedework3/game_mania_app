@@ -101,9 +101,9 @@ app.post('/api/login', async (req, res) => {
 const initChatHandler = require('./chat/chatHandler');
 initChatHandler(io); // Attiviamo la chat passandogli il server socket io
 
-server.listen(PORT, () => console.log(`Backend in esecuzione su http://localhost:${PORT}`));
-
 const PORT = process.env.PORT || 5000;
+
+server.listen(PORT, () => console.log(`Backend in esecuzione su http://localhost:${PORT}`));
 
 app.listen(PORT, () => {
     console.log(`Server in ascolto sulla porta ${PORT}`);
