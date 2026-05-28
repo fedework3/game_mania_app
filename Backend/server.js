@@ -1,3 +1,4 @@
+require('dotenv').config();// va a prendere il file .env
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose'); // Nuova libreria per MongoDB
@@ -23,10 +24,8 @@ app.use(cors());
 app.use(express.json());
 
 // --- 1. CONNESSIONE A MONGODB ---
-//  URI (Atlas). 
-const MONGODB_URI = "mongodb+srv://prova:mongo@cluster0.3st8f4a.mongodb.net/?appName=Cluster0"; 
 
-mongoose.connect(MONGODB_URI)
+mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("🟢 Connesso a MongoDB con successo!"))
     .catch(err => console.error("🔴 Errore di connessione a MongoDB:", err));
 
