@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken'); // NUOVO: Per i token di sessione
 const http = require('http');
 const { Server } = require('socket.io');
 const gestisciBattagliaNavale = require('./battleshipSocket');
+const Message = require('./chat/Message');
 
 const app = express();
 
@@ -93,6 +94,17 @@ app.post('/api/login', async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ error: "Errore del server durante il login" });
+    }
+});
+
+// Nuova rotta API per recuperare lo storico della chat
+app.get('/api/messages', async (req, res) => {
+    try {
+        // Cerca tutti i messaggi, li ordina per data (dal più vecchio al più recente) e prende gli ultimi 50
+        const storico = await Message.find().sort({ orario: 1 }).limit(50);
+        res.status(200).json(storico);
+    } catch (errore) {
+        res.status(500).json({ message: "Errore nel recupero dei messaggi" });
     }
 });
 

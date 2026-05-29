@@ -13,6 +13,26 @@ function ChatBox() {
   const username = user ? user.username : 'Ospite';
 
   useEffect(() => {
+    // 1. NUOVO: Appena apro la chat, chiedo al backend gli ultimi 50 messaggi
+    const caricaStorico = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/messages`);
+        if (response.ok) {
+          const storico = await response.json();
+          setMessages(storico); // Riempio la chat con la memoria del database!
+        }
+      } catch (error) {
+        console.error("Errore nel caricamento dello storico:", error);
+      }
+    };
+
+    caricaStorico(); // Eseguo la funzione. Quando si apre la pagina, 
+    // la funzione caricaStorico scatta per prima. 
+    // Bussa alla nuova rotta /api/messages del server Node, 
+    // si fa dare la lista dei vecchi messaggi da MongoDB e li stampa a schermo.
+    //  Poi, Socket.io prende aggiunge in tempo reale
+    //  i messaggi nuovi che si scrivono
+
     if (user) {
       socket.emit('imposta_username', user.username);
     }
@@ -32,7 +52,7 @@ function ChatBox() {
 
     // Usiamo il VERO nome utente al posto di "Io"!
     const datiMessaggio = {
-      autore: username, 
+      username: username, 
       testo: chatMessage
     };
 

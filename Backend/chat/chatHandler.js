@@ -1,4 +1,5 @@
 const gestisciBattagliaNavale = require('../battleshipSocket');
+const Message = require('./Message'); // Importiamo il modello del databas
 
 // Questo modulo riceve "io" dal server principale e gestisce i canali
 module.exports = function(io) {
@@ -9,9 +10,22 @@ module.exports = function(io) {
         });
 
         // Ascolta i messaggi in arrivo
-        socket.on('invia_messaggio', (datiMessaggio) => {
-            // Rispedisci a tutti
-            io.emit('ricevi_messaggio', datiMessaggio);
+        socket.on('invia_messaggio', async (datiMessaggio) => {
+            try {
+                // 1. Prepariamo il pacchetto per MongoDB
+                const nuovoMessaggio = new Message({
+                    username: datiMessaggio.username,
+                    testo: datiMessaggio.testo
+                });
+                
+                // 2. Lo salviamo fisicamente nel database in cloud
+                await nuovoMessaggio.save();
+
+                // 3. Se il salvataggio va a buon fine, lo mostriamo in tempo reale a tutti
+                io.emit('ricevi_messaggio', datiMessaggio);
+            } catch (errore) {
+                console.error("Errore durante il salvataggio del messaggio su DB:", errore);
+            }
         });
 
         socket.on('disconnect', () => {
