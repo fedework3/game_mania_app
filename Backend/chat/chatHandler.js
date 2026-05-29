@@ -1,3 +1,5 @@
+const gestisciBattagliaNavale = require('../battleshipSocket');
+
 // Questo modulo riceve "io" dal server principale e gestisce i canali
 module.exports = function(io) {
     io.on('connection', (socket) => {
@@ -18,5 +20,8 @@ module.exports = function(io) {
             //altimenti era: console.log("🔴" +socket.username+ "si è disconnesso`);
 
         });
+
+        gestisciBattagliaNavale(io, socket);
+
     });
 };

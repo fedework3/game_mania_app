@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt'); // NUOVO: Per criptare le password
 const jwt = require('jsonwebtoken'); // NUOVO: Per i token di sessione
 const http = require('http');
 const { Server } = require('socket.io');
+const gestisciBattagliaNavale = require('./battleshipSocket');
 
 const app = express();
 

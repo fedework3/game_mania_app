@@ -5,6 +5,7 @@ import './App.css';
 // Importiamo i componenti che abbiamo appena creato nella cartella componenti
 import LoginScreen from './components/LoginScreen';
 import Dashboard from './components/Dashboard';
+import BattagliaNavale from './components/games/BattagliaNavale';
 
 // Importiamo il contesto globale
 import { AuthProvider, AuthContext } from './context/AuthContext';
@@ -25,6 +26,8 @@ function AppRoutes() {
       
       {/* Se l'utente NON è loggato, la rotta lo respinge e lo rimanda alla pagina "/" */}
       <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/" />} />
+
+      <Route path="/battaglia-navale" element={user ? <BattagliaNavale /> : <Navigate to="/" />} />
     </Routes>
   );
 }

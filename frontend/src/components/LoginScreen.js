@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, useContext, use } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 
 function LoginScreen() {
@@ -8,7 +8,7 @@ function LoginScreen() {
   const [isLogin, setIsLogin] = useState(true);
   const [message, setMessage] = useState({ text: '', color: '' });
   const appRef = useRef(null); // riferimento body per animazione GSAP
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const {loginGlobal} = useContext(AuthContext);
 
   //effetto animazione GSAP, quando cambia isOn
@@ -34,7 +34,7 @@ function LoginScreen() {
 
     try {
       const endpoint = type === 'login' ? '/api/login' : '/api/register';
-      const response = await fetch(`https://game-mania-app.onrender.com${endpoint}`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
