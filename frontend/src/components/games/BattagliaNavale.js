@@ -21,17 +21,45 @@ const BattagliaNavale = () => {
   // NUOVO STATO: Ci serve per capire se stiamo aspettando un nemico o se stiamo già combattendo
   const [messaggioStato, setMessaggioStato] = useState("Posiziona le tue 5 navi sulla griglia prima di iniziare.");
 
+  // NUOVO STATO: Traccia se in questo momento tocca a te sparare
+  const [mioTurno, setMioTurno] = useState(false);
+
   // NUOVO: useEffect che "ascolta" le risposte del backend in tempo reale
   useEffect(() => {
-    // Quando il server ci dice che ha trovato due giocatori pronti
+    // Quando il server ci dice che ha trovato due giocatori pronti e di chi è il turno
     socket.on('partita_iniziata', (dati) => {
       setMessaggioStato(`Partita iniziata! Il tuo avversario è: ${dati.avversario}`);
       alert(`Scontro imminente! Giocherai contro ${dati.avversario} 🏴‍☠️`);
+      setMioTurno(dati.tuoTurno); // Riceve true o false dal server
+    });
+
+    // Quando il server ti dice com'è andato il TUO attacco
+    socket.on('risultato_colpo', ({ riga, colonna, esito, tuoTurno }) => {
+      setGrigliaAttacchi(prev => {
+        const nuova = [...prev];
+        nuova[riga] = [...nuova[riga]];
+        nuova[riga][colonna] = esito; // 2 (Acqua) o 3 (Fuoco)
+        return nuova;
+      });
+      setMioTurno(tuoTurno); // Se hai colpito resta true, se hai mancato diventa false
+    });
+
+    // Quando l'avversario ti bombarda e il server ti dice dove ti ha preso
+    socket.on('colpo_subito', ({ riga, colonna, esito, tuoTurno }) => {
+      setGrigliaPersonale(prev => {
+        const nuova = [...prev];
+        nuova[riga] = [...nuova[riga]];
+        nuova[riga][colonna] = esito; 
+        return nuova;
+      });
+      setMioTurno(tuoTurno); // Se lui ha mancato diventa true, se ti ha colpito resta false
     });
 
     // Pulizia quando usciamo dalla pagina
     return () => {
       socket.off('partita_iniziata');
+      socket.off('risultato_colpo');
+      socket.off('colpo_subito');
     };
   }, []);
 
@@ -74,15 +102,9 @@ const BattagliaNavale = () => {
   };
 
   const gestisciAttacco = (indiceRiga, indiceColonna) => {
-    if (!isPronto || grigliaAttacchi[indiceRiga][indiceColonna] !== 0) return;
+    if (!isPronto || !mioTurno || grigliaAttacchi[indiceRiga][indiceColonna] !== 0) return;
 
-    const nuovaGriglia = grigliaAttacchi.map((r, i) => 
-      r.map((c, j) => (i === indiceRiga && j === indiceColonna ? 2 : c))
-    );
-    setGrigliaAttacchi(nuovaGriglia);
-    
-    // NUOVO: Qui in futuro manderemo il colpo al server
-    // socket.emit('lancia_colpo', { riga: indiceRiga, colonna: indiceColonna });
+    socket.emit('lancia_colpo', { riga: indiceRiga, colonna: indiceColonna });
   };
 
   return (
