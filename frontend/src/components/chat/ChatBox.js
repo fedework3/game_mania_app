@@ -72,9 +72,9 @@ function ChatBox() {
         ) : (
           messages.map((msg, index) => (
             <div key={index} className="chat-bubble">
-              {/* Se l'autore sono io, coloro il mio nome di verde, altrimenti di blu */}
-              <strong style={{ color: msg.autore === username ? '#2ecc71' : '#3498db' }}>
-                {msg.autore}:
+              {/* Se scrivo io, coloro il mio nome di verde, altrimenti di blu */}
+              <strong style={{ color: msg.username === username ? '#2ecc71' : '#3498db' }}>
+                {msg.username}:
               </strong> {msg.testo}
             </div>
           ))
