@@ -111,7 +111,7 @@ const BattagliaNavale = () => {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', position: 'relative', textAlign: 'center' }}>
       
       <button onClick={gestisciEsci} style={{ position: 'absolute', top: '20px', right: '20px', backgroundColor: '#ff4d4d', color: 'white', border: 'none', padding: '10px 15px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
-        Esci ❌
+        Torna nella lobby ❌
       </button>
 
       <h2>Battaglia Navale 🚢</h2>

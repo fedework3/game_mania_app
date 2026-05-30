@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 //import { useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
+import '../Login.css';
 
 function LoginScreen() {
   const [isOn, setIsOn] = useState(false); //stati di react

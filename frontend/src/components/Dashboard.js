@@ -3,6 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import ChatBox from './chat/ChatBox';
 import { useNavigate } from 'react-router-dom';//per i giochi
 import immagineBattaglia from '../assets/battaglia_navale.jpg'
+import '../Dashboard.css';
 
 function Dashboard() {
   const { logoutGlobal } = useContext(AuthContext);//prenddo logout globale

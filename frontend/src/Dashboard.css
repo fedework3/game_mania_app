@@ -1,0 +1,348 @@
+
+/* Variabili Colori Tech-Neon */
+:root {
+  --bg-dark-base: #0a0f1d; /* Blu notte profondissimo */
+  --bg-card: rgba(30, 41, 59, 0.6); /* Effetto vetro semitrasparente */
+  --border-color: rgba(255, 255, 255, 0.1);
+  --neon-cyan: #06b6d4;
+  --neon-pink: #d946ef;
+  --logo-yellow: #facc15;
+  --button-red: #ef4444;
+  --button-blue: #3b82f6;
+  --button-send: #f59e0b;
+}
+
+/* LOBBY WRAPPER (Con effetto gradienti luminosi) */
+.dashboard-wrapper {
+  padding: 20px 40px;
+  color: white;
+  height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-dark-base);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Overlay per i gradienti neon di sfondo (Ciano a sx, Rosa a dx) */
+.dashboard-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    radial-gradient(circle at 10% 50%, var(--neon-cyan) 0%, transparent 40%),
+    radial-gradient(circle at 90% 50%, var(--neon-pink) 0%, transparent 40%);
+  opacity: 0.15;
+  z-index: -1;
+  pointer-events: none; /* Impedisce che il gradiente blocchi i click */
+}
+
+/* HEADER */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-header h1 {
+  color: var(--logo-yellow);
+  margin: 0;
+  font-size: 32px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.3);
+}
+
+.logout-btn {
+  padding: 10px 20px;
+  background: var(--button-red);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: #f87171;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+  transform: scale(1.05);
+}
+
+/* CONTENITORE PRINCIPALE */
+.dashboard-content {
+  display: flex;
+  gap: 30px;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* COLONNA GIOCHI */
+.games-column {
+  flex: 2;
+  background: transparent;
+  padding: 0 15px 0 0;
+  overflow-y: auto;
+}
+
+/* COLONNA CHAT (Con i bordi Neon luminosi) */
+.chat-column {
+  flex: 1;
+  background-color: rgba(10, 15, 29, 0.7); /* Effetto vetro scuro */
+  border-radius: 12px;
+  padding: 0; /* Lasciamo a 0 per non avere doppi spazi */
+  display: flex;
+  flex-direction: column;
+  min-width: 320px;
+  position: relative;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  overflow: hidden; /* Taglia tutto ciò che esce dalle curve del box */
+}
+
+/* Bordo luminoso Ciano a Sinistra della chat */
+.chat-column::before {
+  content: "";
+  position: absolute;
+  top: 50px; /* Inizia sotto il titolo */
+  left: 0; 
+  bottom: 60px; /* Finisce sopra l'input */
+  width: 2px;
+  background-image: linear-gradient(to bottom, transparent, var(--neon-cyan), transparent);
+  box-shadow: 0 0 12px 2px var(--neon-cyan);
+  z-index: 10; /* Messo in disparte */
+  pointer-events: none; /* TRUCCO MAGICO: i click del mouse lo trapassano! */
+}
+
+/* Bordo luminoso Rosa a Destra della chat */
+.chat-column::after {
+  content: "";
+  position: absolute;
+  top: 50px; 
+  right: 0; 
+  bottom: 60px;
+  width: 2px;
+  background-image: linear-gradient(to bottom, transparent, var(--neon-pink), transparent);
+  box-shadow: 0 0 12px 2px var(--neon-pink);
+  z-index: 10;
+  pointer-events: none; /* I click lo trapassano */
+}
+
+.column-title {
+  padding: 15px 20px;
+  margin: 0;
+  color: var(--neon-cyan);
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.3); /* Un microscopico stacco scuro in alto */
+  border-bottom: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* GRIGLIA E CARD DEI GIOCHI */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  margin-top: 10px;
+}
+
+.game-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
+  backdrop-filter: blur(5px);
+}
+
+.game-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.game-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.game-placeholder {
+  width: 100%;
+  height: 140px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #475569;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.game-card h3 {
+  margin: 15px 0 5px 0;
+  font-size: 18px;
+  color: white;
+}
+
+.game-card p {
+  color: #94a3b8;
+  font-size: 13px;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.play-btn {
+  margin-top: auto;
+  padding: 12px;
+  background: var(--button-blue);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+
+.play-btn:hover {
+  background: #60a5fa;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+
+.play-btn.disabled {
+  background: #475569;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* STILI CHAT */
+.chat-messages {
+  flex: 1;
+  padding: 15px 20px; 
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  
+  /* ABILITIAMO LO SCROLLBAR CORRETTO */
+  overflow-y: scroll; /* Forza lo scrollbar solo verticale */
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  
+  position: relative;
+}
+
+/* Bordo luminoso Ciano a Sinistra (Integrazione perfetta) */
+.chat-messages::after {
+  content: "";
+  position: absolute;
+  top: 15px; /* Un po' di spazio dall'header */
+  left: 0; 
+  bottom: 15px; /* Un po' di spazio dal form */
+  width: 2px;
+  background-image: linear-gradient(to bottom, transparent, var(--neon-cyan), transparent);
+  box-shadow: 0 0 12px 1px var(--neon-cyan); /* Effetto glow luminoso più nitido */
+  z-index: 1;
+}
+
+/* Bordo luminoso Rosa a Destra (Integrazione perfetta) */
+.chat-messages::before {
+  content: "";
+  position: absolute;
+  top: 15px; 
+  right: 0; 
+  bottom: 15px;
+  width: 2px;
+  background-image: linear-gradient(to bottom, transparent, var(--neon-pink), transparent);
+  box-shadow: 0 0 12px 1px var(--neon-pink); /* Effetto glow luminoso più nitido */
+  z-index: 1;
+}
+
+/* --- LA PERSONALIZZAZIONE DELLA SCROLLBAR GLOBALE (Tech-Dark) --- */
+
+.dashboard-wrapper *::-webkit-scrollbar {
+  width: 6px; 
+}
+
+.dashboard-wrapper *::-webkit-scrollbar-track {
+  background: transparent; 
+}
+
+.dashboard-wrapper *::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15) !important; 
+  border-radius: 10px;
+}
+
+.dashboard-wrapper *::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+.chat-bubble {
+  font-size: 14px;
+  /* MODIFICATO: Bolle molto scure che si fondono con lo sfondo */
+  background: rgba(25, 32, 44, 0.6); 
+  padding: 10px 15px;
+  border-radius: 8px;
+  line-height: 1.4;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  max-width: 85%;
+  align-self: flex-start; /* Testo a sinistra come default */
+  color: #f1f5f9;
+  word-break: break-word; /* Evita che testi lunghi rompano il layout */
+}
+
+.chat-input-form {
+  padding: 15px 20px; /* Ripristiniamo il padding qui */
+  display: flex;
+  gap: 10px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid var(--border-color);
+  border-radius: 0 0 12px 12px;
+  box-sizing: border-box;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: #0d111c; /* Molto scuro */
+  border-radius: 6px;
+  color: white;
+  font-size: 14px;
+}
+
+.chat-input:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(6, 182, 212, 0.2);
+}
+
+.chat-submit {
+  padding: 10px 20px;
+  background: var(--button-send);
+  color: #121417;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chat-submit:hover {
+  background: #fbbf24;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
