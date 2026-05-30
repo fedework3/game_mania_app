@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { AuthContext } from '../../context/AuthContext'; // contesto globale
 // Connessione socket isolata per questo componente
@@ -11,6 +11,19 @@ function ChatBox() {
   // Prendiamo l'utente direttamente dal guscio globale! Non serve più jwtDecode qui!
   const { user } = useContext(AuthContext);
   const username = user ? user.username : 'Ospite';
+
+  // NUOVO: Creiamo l'ancora invisibile
+  const fineChatRef = useRef(null);
+
+  // NUOVO: Funzione che fa scorrere la pagina verso l'ancora in modo fluido
+  const scorriInBasso = () => {
+    fineChatRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // NUOVO: Diciamo a React di scorrere in basso ogni volta che l'array "messages" cambia
+  useEffect(() => {
+    scorriInBasso();
+  }, [messages]);
 
   useEffect(() => {
     // 1. NUOVO: Appena apro la chat, chiedo al backend gli ultimi 50 messaggi
