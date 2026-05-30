@@ -92,6 +92,7 @@ function ChatBox() {
             </div>
           ))
         )}
+        <div ref={fineChatRef} />
       </div>
 
       <form onSubmit={handleSendMessage} className="chat-input-form">
