@@ -1,0 +1,234 @@
+.battaglia-container {
+  padding: 20px;
+  min-height: 100vh;
+  /* NUOVO: Sfondo celeste (tonalità oceano per contrastare bene col verde radar) */
+  background-color: #0284c7; 
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.battaglia-title {
+  /* NUOVO: Titolo verde neon per abbinarsi alla griglia */
+  color: #4ade80; 
+  font-size: 32px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+}
+
+.stato-messaggio {
+  font-size: 18px;
+  color: #e2e8f0;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.btn-abbandona {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-abbandona:hover {
+  background-color: #f87171;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+/* BANNER DEL TURNO */
+.turno-banner {
+  padding: 15px 40px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.mio-turno {
+  background-color: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+  border: 1px solid #4ade80;
+  box-shadow: 0 0 15px rgba(74, 222, 128, 0.5);
+}
+
+.suo-turno {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.5);
+}
+
+/* FASI DI GIOCO */
+.setup-fase {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  margin-top: 20px;
+}
+
+.combattimento-fase {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-top: 20px;
+}
+
+.flotta-box {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.navi-rimanenti {
+  font-size: 28px;
+  font-weight: bold;
+  color: #facc15;
+  margin-top: 10px;
+}
+
+.btn-pronto {
+  background-color: #475569;
+  color: #cbd5e1;
+  border: none;
+  padding: 20px 40px;
+  font-size: 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: not-allowed;
+  transition: all 0.3s;
+}
+
+.btn-pronto.attivo {
+  background-color: #22c55e;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+}
+
+.btn-pronto.attivo:hover {
+  background-color: #4ade80;
+}
+
+/* --- LA GRIGLIA E LE COORDINATE --- */
+.griglia-bordata {
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo scuro per staccare dal celeste */
+  border: 2px solid #22c55e; /* NUOVO: Bordo griglia verde */
+  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(9, 233, 91, 0.835); /* Bagliore verde */
+  display: inline-block;
+}
+
+.griglia-riga {
+  display: flex;
+}
+
+.cella {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.header-cella {
+  color: #ffffff;
+  font-size: 16px;
+  /* IL TRUCCO DELL'ALLINEAMENTO: diamo lo stesso "ingombro" della cella da gioco */
+  margin: 1px;
+  border: 1px solid transparent; 
+}
+
+.cella-gioco {
+  border: 1px solid rgba(15, 235, 95, 0.92); /* NUOVO: Linee interne verdi */
+  margin: 1px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  font-size: 20px; 
+}
+
+/* Colori delle celle in gioco */
+.acqua-inesplorata {
+  background-color: rgba(34, 197, 94, 0.1); /* Leggero filtro verde radar */
+}
+
+.nave {
+  background-color: #475569;
+}
+
+.mancato {
+  background-color: rgba(56, 189, 248, 0.3); /* Azzurro chiaro per il tonfo in acqua */
+}
+
+.colpito {
+  background-color: rgba(239, 68, 68, 0.6); /* Rosso per l'esplosione */
+}
+
+/* Effetto Hover solo sul Radar (Griglia d'attacco) */
+.cella-gioco.is-radar.acqua-inesplorata:hover {
+  background-color: rgba(34, 197, 94, 0.4); /* Hover verde acceso */
+  cursor: crosshair;
+  box-shadow: inset 0 0 10px #22c55e;
+}
+
+/* OVERLAY VITTORIA / SCONFITTA */
+.vittoria-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.vittoria-banner {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 2px solid #facc15;
+  padding: 40px 60px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(250, 204, 21, 0.4);
+}
+
+.vittoria-banner h1 {
+  color: #facc15;
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.loader-linea {
+  height: 4px;
+  background: #facc15;
+  margin-top: 20px;
+  border-radius: 2px;
+  animation: shrink 5s linear forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}

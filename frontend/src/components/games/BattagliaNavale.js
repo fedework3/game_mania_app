@@ -1,50 +1,41 @@
-import React, { useState, useEffect, useContext } from 'react'; // NUOVO: importati useEffect e useContext
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext'; // NUOVO: per sapere chi sta giocando
-import { io } from 'socket.io-client'; // NUOVO: il nostro walkie-talkie
+import { AuthContext } from '../../context/AuthContext';
+import { io } from 'socket.io-client';
+import '../../BattagliaNavale.css'; // NUOVO: Importiamo il nostro foglio di stile!
 
-// NUOVO: Inserisci qui il link del tuo backend (Render se stai testando online, o localhost se sei in locale)
 const socket = io(process.env.REACT_APP_BACKEND_URL);
-//const socket = io('http://localhost:5000');
 
 const BattagliaNavale = () => {
   const navigate = useNavigate();
-  
-  // NUOVO: Recuperiamo i dati dell'utente connesso
   const { user } = useContext(AuthContext); 
 
   const [grigliaPersonale, setGrigliaPersonale] = useState(Array.from({ length: 10 }, () => Array(10).fill(0)));
   const [naviRimanenti, setNaviRimanenti] = useState(5);
   const [isPronto, setIsPronto] = useState(false);
   const [grigliaAttacchi, setGrigliaAttacchi] = useState(Array.from({ length: 10 }, () => Array(10).fill(0)));
-
-  // NUOVO STATO: Ci serve per capire se stiamo aspettando un nemico o se stiamo già combattendo
   const [messaggioStato, setMessaggioStato] = useState("Posiziona le tue 5 navi sulla griglia prima di iniziare.");
-
-  // NUOVO STATO: Traccia se in questo momento tocca a te sparare
   const [mioTurno, setMioTurno] = useState(false);
+  
+  // NUOVO STATO: Gestisce la fine della partita
+  const [vincitore, setVincitore] = useState(null);
 
-  // NUOVO: useEffect che "ascolta" le risposte del backend in tempo reale
   useEffect(() => {
-    // Quando il server ci dice che ha trovato due giocatori pronti e di chi è il turno
     socket.on('partita_iniziata', (dati) => {
       setMessaggioStato(`Partita iniziata! Il tuo avversario è: ${dati.avversario}`);
-      alert(`Scontro imminente! Giocherai contro ${dati.avversario} 🏴‍☠️`);
-      setMioTurno(dati.tuoTurno); // Riceve true o false dal server
+      setMioTurno(dati.tuoTurno);
     });
 
-    // Quando il server ti dice com'è andato il TUO attacco
     socket.on('risultato_colpo', ({ riga, colonna, esito, tuoTurno }) => {
       setGrigliaAttacchi(prev => {
         const nuova = [...prev];
         nuova[riga] = [...nuova[riga]];
-        nuova[riga][colonna] = esito; // 2 (Acqua) o 3 (Fuoco)
+        nuova[riga][colonna] = esito; 
         return nuova;
       });
-      setMioTurno(tuoTurno); // Se hai colpito resta true, se hai mancato diventa false
+      setMioTurno(tuoTurno);
     });
 
-    // Quando l'avversario ti bombarda e il server ti dice dove ti ha preso
     socket.on('colpo_subito', ({ riga, colonna, esito, tuoTurno }) => {
       setGrigliaPersonale(prev => {
         const nuova = [...prev];
@@ -52,19 +43,29 @@ const BattagliaNavale = () => {
         nuova[riga][colonna] = esito; 
         return nuova;
       });
-      setMioTurno(tuoTurno); // Se lui ha mancato diventa true, se ti ha colpito resta false
+      setMioTurno(tuoTurno); 
     });
 
-    // Pulizia quando usciamo dalla pagina
+    // NUOVO: Ascoltiamo quando il server dichiara la fine della partita
+    socket.on('fine_partita', ({ messaggio }) => {
+      setVincitore(messaggio); // Mostra il messaggio a schermo
+      
+      // Timer di 5 secondi prima di tornare alla dashboard
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 5000);
+    });
+
     return () => {
       socket.off('partita_iniziata');
       socket.off('risultato_colpo');
       socket.off('colpo_subito');
+      socket.off('fine_partita');
     };
-  }, []);
+  }, [navigate]);
 
   const gestisciEsci = () => {
-    const conferma = window.confirm("Sei sicuro di abbandonare la partita?");
+    const conferma = window.confirm("Sei sicuro di abbandonare la partita? Perderai automaticamente.");
     if (conferma) {
       navigate('/dashboard');
     }
@@ -72,7 +73,6 @@ const BattagliaNavale = () => {
 
   const gestisciClickPersonale = (indiceRiga, indiceColonna) => {
     if (isPronto) return;
-
     const cella = grigliaPersonale[indiceRiga][indiceColonna];
     if (cella === 0 && naviRimanenti > 0) {
       const nuovaGriglia = grigliaPersonale.map((r, i) => r.map((c, j) => (i === indiceRiga && j === indiceColonna ? 1 : c)));
@@ -90,11 +90,9 @@ const BattagliaNavale = () => {
       alert(`Devi piazzare ancora ${naviRimanenti} navi!`);
       return;
     }
-    
     setIsPronto(true);
     setMessaggioStato("In attesa di un avversario... ⏳");
     
-    // NUOVO: Inviamo la nostra griglia segreta e il nostro nome al Backend!
     socket.emit('giocatore_pronto', {
       username: user ? user.username : 'Ospite',
       griglia: grigliaPersonale
@@ -102,51 +100,62 @@ const BattagliaNavale = () => {
   };
 
   const gestisciAttacco = (indiceRiga, indiceColonna) => {
-    if (!isPronto || !mioTurno || grigliaAttacchi[indiceRiga][indiceColonna] !== 0) return;
-
+    if (!isPronto || !mioTurno || vincitore || grigliaAttacchi[indiceRiga][indiceColonna] !== 0) return;
     socket.emit('lancia_colpo', { riga: indiceRiga, colonna: indiceColonna });
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', position: 'relative', textAlign: 'center' }}>
-      
-      <button onClick={gestisciEsci} style={{ position: 'absolute', top: '20px', right: '20px', backgroundColor: '#ff4d4d', color: 'white', border: 'none', padding: '10px 15px', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>
-        Torna nella lobby ❌
+    <div className="battaglia-container">
+      <button onClick={gestisciEsci} className="btn-abbandona">
+        Abbandona ❌
       </button>
 
-      <h2>Battaglia Navale 🚢</h2>
+      <h2 className="battaglia-title">Battaglia Navale 🚢</h2>
       
-      {/* NUOVO: Mostriamo il messaggio di stato dinamico */}
-      <p style={{ fontSize: '18px', fontWeight: 'bold', color: isPronto ? 'red' : 'black' }}>
-        {messaggioStato}
-      </p>
-      
-      {!isPronto ? (
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '40px', marginTop: '20px' }}>
-            <div style={{ border: '2px dashed #666', padding: '15px', borderRadius: '8px', backgroundColor: '#f9f9f9', width: '150px' }}>
-              <h4>Navi disponibili</h4>
-              <p style={{ fontSize: '24px', fontWeight: 'bold' }}>🚢 x {naviRimanenti}</p>
-            </div>
-
-            <Griglia dati={grigliaPersonale} onClick={gestisciClickPersonale} />
-
-            <button onClick={gestisciPronto} style={{ backgroundColor: '#4CAF50', color: 'white', border: 'none', padding: '20px 30px', fontSize: '18px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
-              PRONTO 🏁
-            </button>
+      {/* OVERLAY DI FINE PARTITA */}
+      {vincitore && (
+        <div className="vittoria-overlay">
+          <div className="vittoria-banner">
+            <h1>{vincitore}</h1>
+            <p>Ritorno alla lobby in 5 secondi...</p>
+            <div className="loader-linea"></div>
           </div>
         </div>
+      )}
+
+      {/* BANNER DEL TURNO */}
+      {isPronto && !vincitore && !messaggioStato.includes("In attesa") && (
+        <div className={`turno-banner ${mioTurno ? 'mio-turno' : 'suo-turno'}`}>
+          {mioTurno ? "🎯 È IL TUO TURNO! Spara al nemico!" : "⏳ Turno dell'avversario... in attesa"}
+        </div>
+      )}
+
+      <p className="stato-messaggio">{messaggioStato}</p>
+      
+      {!isPronto ? (
+        <div className="setup-fase">
+          <div className="flotta-box">
+            <h4>Navi disponibili</h4>
+            <p className="navi-rimanenti">🚢 x {naviRimanenti}</p>
+          </div>
+          
+          <div className="griglia-wrapper">
+            <Griglia dati={grigliaPersonale} onClick={gestisciClickPersonale} />
+          </div>
+
+          <button onClick={gestisciPronto} className={`btn-pronto ${naviRimanenti === 0 ? 'attivo' : ''}`}>
+            PRONTO 🏁
+          </button>
+        </div>
       ) : (
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: '50px', marginTop: '20px' }}>
-            <div>
-              <h4>La tua flotta</h4>
-              <Griglia dati={grigliaPersonale} onClick={() => {}} />
-            </div>
-            <div>
-              <h4>Radar Nemico</h4>
-              <Griglia dati={grigliaAttacchi} onClick={gestisciAttacco} isRadar={true} />
-            </div>
+        <div className="combattimento-fase">
+          <div className="giocatore-box">
+            <h4>La tua flotta</h4>
+            <Griglia dati={grigliaPersonale} onClick={() => {}} />
+          </div>
+          <div className="nemico-box">
+            <h4>Radar Nemico</h4>
+            <Griglia dati={grigliaAttacchi} onClick={gestisciAttacco} isRadar={true} />
           </div>
         </div>
       )}
@@ -154,37 +163,50 @@ const BattagliaNavale = () => {
   );
 };
 
-const Griglia = ({ dati, onClick, isRadar }) => (
-  <div style={{ border: '3px solid #333', padding: '2px', backgroundColor: '#fff', display: 'inline-block' }}>
-    {dati.map((riga, i) => (
-      <div key={i} style={{ display: 'flex' }}>
-        {riga.map((cella, j) => {
-          let bgColor = 'lightblue';
-          if (cella === 1) bgColor = '#555';
-          if (cella === 2) bgColor = 'white';
-          if (cella === 3) bgColor = 'red';
+// COMPONENTE GRIGLIA MODIFICATO CON COORDINATE
+const Griglia = ({ dati, onClick, isRadar }) => {
+  const lettere = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
-          return (
-            <div
-              key={j}
-              onClick={() => onClick(i, j)}
-              style={{
-                width: '40px', height: '40px', border: '1px solid #999',
-                backgroundColor: bgColor,
-                cursor: 'crosshair',
-                transition: 'background-color 0.2s',
-                display: 'flex', justifyContent: 'center', alignItems: 'center'
-              }}
-            >
-              {!isRadar && cella === 1 && "🚢"}
-              {cella === 2 && "💦"}
-              {cella === 3 && "🔥"}
-            </div>
-          );
-        })}
+  return (
+    <div className="griglia-bordata">
+      {/* RIGA INTESTAZIONE (Lettere) */}
+      <div className="griglia-riga header-riga">
+        <div className="cella header-cella vuota"></div>
+        {lettere.map((lettera, index) => (
+          <div key={index} className="cella header-cella">{lettera}</div>
+        ))}
       </div>
-    ))}
-  </div>
-);
+
+      {/* RIGHE DI GIOCO */}
+      {dati.map((riga, i) => (
+        <div key={i} className="griglia-riga">
+          {/* NUMERO COLONNA SINISTRA */}
+          <div className="cella header-cella">{i + 1}</div>
+          
+          {/* CELLE DI GIOCO */}
+          {riga.map((cella, j) => {
+            let statoClasse = 'acqua-inesplorata';
+            if (cella === 1) statoClasse = 'nave';
+            if (cella === 2) statoClasse = 'mancato';
+            if (cella === 3) statoClasse = 'colpito';
+
+            return (
+              <div
+                key={j}
+                onClick={() => onClick(i, j)}
+                className={`cella cella-gioco ${statoClasse} ${isRadar ? 'is-radar' : ''}`}
+                title={`${lettere[j]}${i + 1}`} // Tooltip quando passi col mouse!
+              >
+                {!isRadar && cella === 1 && "🚢"}
+                {cella === 2 && "💦"}
+                {cella === 3 && "🔥"}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export default BattagliaNavale;

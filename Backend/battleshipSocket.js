@@ -23,7 +23,7 @@ const gestisciBattagliaNavale = (io, socket) => {
             giocatore1.socket.join(nomeStanza);
             socket.join(nomeStanza);
 
-            // 2. INVIAMO IL RISULTATO DEL LANCIO DELLA MONETA AL FRONTEND (tuoTurno sarà true o false)
+            // 2. INVIAMO IL RISULTATO DEL LANCIO DELLA MONETA AL FRONTEND
             io.to(giocatore1.id).emit('partita_iniziata', { 
                 avversario: giocatore2.username, 
                 tuoTurno: (idPrimoGiocatore === giocatore1.id) 
@@ -55,9 +55,29 @@ const gestisciBattagliaNavale = (io, socket) => {
         if (cellaBersaglio === 1) {
             esito = 3; // Colpito!
             statoAvversario.miaGriglia[riga][colonna] = 3;
+
+            // Usiamo ".some" per cercare se c'è almeno un "1" (nave intatta) rimasto nella griglia nemica.
+            // Se non ne trova, significa che sono state tutte affondate!
+            const naviSopravvissute = statoAvversario.miaGriglia.some(r => r.includes(1));
+
+            if (!naviSopravvissute) {
+                // Mandiamo l'ultimo colpo visivo sui radar per fargli vedere l'esplosione finale
+                socket.emit('risultato_colpo', { riga, colonna, esito, tuoTurno: false });
+                io.to(avversario.id).emit('colpo_subito', { riga, colonna, esito, tuoTurno: false });
+
+                // Decretiamo il vincitore e il perdente!
+                socket.emit('fine_partita', { messaggio: "VITTORIA! 🏆 Hai affondato tutta la flotta!" });
+                io.to(avversario.id).emit('fine_partita', { messaggio: "SCONFITTA! 💥 La tua flotta è distrutta!" });
+
+                // Pulizia della memoria del server per liberare spazio
+                delete utentiInGioco[socket.id];
+                delete utentiInGioco[avversario.id];
+                
+                return; // Interrompiamo la funzione qui, la partita è finita!
+            }
         }
 
-        // 3. GESTIONE DEL CAMBIO TURNO
+        // 3. GESTIONE DEL CAMBIO TURNO (solo se la partita non è finita)
         if (esito === 2) {
             // Se è ACQUA, il turno passa all'avversario
             mioStato.turnoDi = avversario.id;
@@ -66,13 +86,11 @@ const gestisciBattagliaNavale = (io, socket) => {
         // Se è COLPITO (esito === 3), non facciamo nulla: il turno rimane a socket.id!
 
         // 4. RISPOSTE CON AGGIORNAMENTO TURNO
-        // Per chi ha sparato: continua se ha colpito una nave (esito 3)
         socket.emit('risultato_colpo', { 
             riga, colonna, esito, 
             tuoTurno: (esito === 3) 
         });
 
-        // Per chi ha subito il colpo: diventa il suo turno solo se il nemico ha preso l'acqua (esito 2)
         io.to(avversario.id).emit('colpo_subito', { 
             riga, colonna, esito, 
             tuoTurno: (esito === 2) 
@@ -82,6 +100,18 @@ const gestisciBattagliaNavale = (io, socket) => {
     socket.on('disconnect', () => {
         if (giocatoreInAttesa && giocatoreInAttesa.id === socket.id) {
             giocatoreInAttesa = null;
+        }
+
+        // Se un giocatore aggiorna la pagina o chiude il browser MENTRE sta giocando
+        const mioStato = utentiInGioco[socket.id];
+        if (mioStato) {
+            const avversario = mioStato.avversario;
+            // Diciamo all'avversario che ha vinto a tavolino
+            io.to(avversario.id).emit('fine_partita', { messaggio: "VITTORIA! 🏆 L'avversario è scappato." });
+            
+            // Puliamo i dati dal server
+            delete utentiInGioco[socket.id];
+            delete utentiInGioco[avversario.id];
         }
     });
 };
