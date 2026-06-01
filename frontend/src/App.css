@@ -21,7 +21,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* (Opzionale) Rimuovi la sottolineatura di default da tutti i link del sito */
+/*  Rimuovi la sottolineatura di default da tutti i link del sito */
 a {
   text-decoration: none;
   color: inherit;
