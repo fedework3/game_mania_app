@@ -60,6 +60,7 @@ const BattagliaNavale = () => {
   const [mioTurno, setMioTurno] = useState(false);
   const [vincitore, setVincitore] = useState(null);
   const [naviDaPiazzare, setNaviDaPiazzare] = useState(FLOTTA_INIZIALE);
+  const [flottaNemica, setFlottaNemica] = useState(FLOTTA_INIZIALE.map(nave => nave.size));
 
   useEffect(() => {
     socket.on('partita_iniziata', (dati) => {
@@ -74,6 +75,16 @@ const BattagliaNavale = () => {
         else nuova[riga][colonna] = esito;
         return nuova;
       });
+      // NUOVA LOGICA: Se affondiamo una nave, calcoliamo quanto era grande e la togliamo!
+      if (esito === 4 && coordinateAffondate) {
+        const dimensioneAffondata = coordinateAffondate.length;
+        setFlottaNemica(prev => {
+          const nuovaFlotta = [...prev];
+          const indice = nuovaFlotta.indexOf(dimensioneAffondata);
+          if (indice > -1) nuovaFlotta.splice(indice, 1); // Rimuove la nave colpita dall'elenco
+          return nuovaFlotta;
+        });
+      }
       setMioTurno(tuoTurno);
     });
 
@@ -225,7 +236,7 @@ const BattagliaNavale = () => {
 
   return (
     <div className="battaglia-container">
-      <button onClick={gestisciEsci} className="btn-abbandona">Abbandona ❌</button>
+      <button onClick={gestisciEsci} className="btn-abbandona">Abbandona</button>
       <h2 className="battaglia-title">Battaglia Navale <IconaNave /></h2>
       
       {vincitore && (
@@ -259,7 +270,15 @@ const BattagliaNavale = () => {
             <h4>Plancia Comando</h4>
             {naviDaPiazzare.length > 0 ? (
               <>
-                <p className="nave-attuale">Prossima nave: <span className="highlight-neon">{naviDaPiazzare[0].size} caselle</span></p>
+                <div className="preview-nave-container">
+                  <p className="nave-attuale">Prossima nave:</p>
+                  <div 
+                    className="nave-preview-box" 
+                    style={{ width: `${naviDaPiazzare[0].size * 42}px` }}
+                  >
+                    <IconaNave />
+                  </div>
+                </div>
                 <p style={{color: '#94a3b8', fontSize: '13px', marginTop: '10px'}}>
                   💡 <strong>Clicca</strong> la nave per ruotarla.<br/>
                   ❌ Usa la 'X' per riprenderla.
@@ -267,7 +286,7 @@ const BattagliaNavale = () => {
                 <button onClick={resetGriglia} className="btn-reset" style={{marginTop: '20px'}}>🗑️ Svuota Griglia</button>
               </>
             ) : (
-              <p className="navi-pronte">Flotta schierata! ✅</p>
+              <p className="navi-pronte">Flotta schierata!</p>
             )}
           </div>
           <div className="griglia-wrapper">
@@ -285,12 +304,38 @@ const BattagliaNavale = () => {
       ) : (
         <div className="combattimento-fase">
           <div className="giocatore-box">
-            <h4>La tua flotta</h4>
+            <h4 style={{ marginBottom: '15px' }}>La tua flotta</h4>
             <Griglia dati={grigliaPersonale} onClick={() => {}} naviPiazzate={naviPiazzate} isPronto={true} />
           </div>
+          
           <div className="nemico-box">
-            <h4>Radar Nemico</h4>
-            <Griglia dati={grigliaAttacchi} onClick={gestisciAttacco} isRadar={true} isPronto={true} />
+            
+            <div className="titolo-radar-nemico">
+              <h4 style={{ marginBottom: '15px' }}>Radar Nemico</h4>
+            </div> {/* <-- Questo div mancava e sballava tutto! */}
+
+            {/* NUOVO CONTENITORE: Affianca la griglia e la colonna laterale */}
+            <div className="radar-e-flotta">
+              
+              {/* LA GRIGLIA RIMANE A SINISTRA */}
+              <Griglia dati={grigliaAttacchi} onClick={gestisciAttacco} isRadar={true} isPronto={true} />
+              
+              {/* LA COLONNA CON LE NAVI A DESTRA */}
+              <div className="flotta-nemica-colonna">
+                {flottaNemica.length > 0 ? (
+                  flottaNemica.map((dimensione, idx) => (
+                    <div key={idx} className="mini-capsula-nemica" style={{ width: `${dimensione * 28}px`, height: '26px' }} title={`Nave da ${dimensione} caselle`}>
+                      {/* MODIFICATO: Ruotiamo l'icona di 90 gradi per farla stare dritta nella capsula */}
+                      <IconaNave stile={{ width: '14px', height: '14px'}} />
+                    </div>
+                  ))
+                ) : (
+                  <span className="nemico-distrutto">DISTRUTTA!</span>
+                )}
+              </div>
+              
+            </div>
+            
           </div>
         </div>
       )}

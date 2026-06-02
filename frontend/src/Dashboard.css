@@ -310,6 +310,7 @@
   padding: 15px 20px; /* Ripristiniamo il padding qui */
   display: flex;
   gap: 10px;
+  align-items: center;
   background-color: rgba(0, 0, 0, 0.3);
   border-top: 1px solid var(--border-color);
   border-radius: 0 0 12px 12px;
@@ -318,7 +319,9 @@
 
 .chat-input {
   flex: 1;
-  padding: 12px;
+  height: 45px; /* NUOVO: Altezza fissa uguale al bottone */
+  padding: 0 15px; /* MODIFICATO: Spazio solo a destra e sinistra, l'altezza la gestisce "height" */
+  box-sizing: border-box; /* NUOVO: Evita che i bordi sfasino la misura */
   border: none;
   background: #0d111c; /* Molto scuro */
   border-radius: 6px;
@@ -332,7 +335,9 @@
 }
 
 .chat-submit {
-  padding: 10px 20px;
+  height: 45px; /* NUOVO: Stessa identica altezza dell'input! */
+  padding: 0 20px; /* MODIFICATO: Spazio solo a destra e sinistra */
+  box-sizing: border-box; /* NUOVO */
   background: var(--button-send);
   color: #121417;
   border: none;

@@ -7,12 +7,20 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  width: 100vw;
   margin: 0;
   position: relative;
   transition: background-color 0.6s ease;
 }
 
+.hint {
+  font-size: 14px;
+  color: #a0aec0; /* Grigio chiaro per non distrarre troppo */
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/*
 .nav {
   position: absolute;
   top: 20px;
@@ -25,6 +33,7 @@
   text-decoration: none;
   font-weight: bold;
 }
+*/
 
 .lamp-switch {
   width: 80px;
@@ -46,7 +55,7 @@
 .auth-container {
   width: 300px;
   min-height: 350px;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .form-card {
@@ -64,17 +73,23 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-input {
+.form-card input {
   display: block;
-  margin: 15px auto;
+  margin: 15px 0;
   padding: 12px;
-  width: 90%;
+  width: 100%;
+  box-sizing: border-box; /* include il padding nella larghezza totale */
   border-radius: 6px;
   border: 1px solid rgba(255,255,255,0.1);
   background: rgba(0,0,0,0.2);
   color: white;
 }
+.form-card input:focus {
+  outline: none;
+  border-color: #f1c40f; /* Un bell'effetto quando l'utente clicca sull'input */
+}
 
+/* bottone d'invio */
 .submit-btn {
   background: #f1c40f;
   color: #121417;
@@ -82,8 +97,15 @@ input {
   cursor: pointer;
   width: 100%;
   padding: 12px;
+  box-sizing: border-box;
   border: none;
   border-radius: 6px;
+  margin-top: 20px;
+  transition: transform 0.2s, background 0.2s; /* Aggiunta transizione fluida */
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px); /* Effetto sollevamento al passaggio del mouse */
 }
 
 .submit-btn.register {
@@ -97,4 +119,9 @@ input {
   text-decoration: underline;
   display: block;
   margin-top: 15px;
+  transition: color 0.2s;
+}
+
+.toggle-link:hover {
+  color: white; /* Si illumina al passaggio del mouse */
 }

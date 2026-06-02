@@ -64,13 +64,13 @@ function LoginScreen() {
       <button className="lamp-switch" onClick={toggleLamp} style={{ '--on': isOn ? 1 : 0 }}></button>
       <div className="auth-container">
         {isOn && (
-          <div className="form-card active-ui">
+          <div className="form-card">
             {isLogin ? (
               <form onSubmit={(e) => handleAuth('login', e)}>
                 <h3>Login</h3>
                 <input name="username" type="text" placeholder="Username" />
                 <input name="password" type="password" placeholder="Password" />
-                <button type="submit" className="submit-btn">Entra</button>
+                <button type="submit" className="submit-btn">Accedi</button>
                 <span className="toggle-link" onClick={() => setIsLogin(false)}>Non hai un account?</span>
               </form>
             ) : (
