@@ -2,14 +2,14 @@
   background-color: #121417;
   color: white;
   font-family: sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   height: 100vh;
   margin: 0;
   position: relative;
   transition: background-color 0.6s ease;
+  overflow: hidden; /* Evita le barre di scorrimento causate dallo sfondo animato */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hint {
@@ -20,6 +20,93 @@
   letter-spacing: 1px;
 }
 
+/* SFONDO GAMING ANIMATO (Griglia in movimento) */
+.gaming-background {
+  position: absolute;
+  top: -50%; left: -50%; right: -50%; bottom: -50%;
+  background-image: 
+    linear-gradient(rgba(241, 196, 15, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(241, 196, 15, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: 0;
+  transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+  animation: gridMove 10s linear infinite;
+  pointer-events: none; /* Impedisce che blocchi i click del mouse */
+}
+
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 50px; }
+}
+
+/* --- CONTENITORE DIVISO A METÀ --- */
+.content-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1100px;
+  padding: 0 40px;
+  z-index: 1; /* Tiene tutto sopra lo sfondo animato */
+}
+
+/* LATO SINISTRO (Testo) */
+.welcome-section {
+  flex: 1;
+  text-align: left;
+  padding-right: 50px;
+}
+
+.cyber-title {
+  font-size: 5rem;
+  font-weight: 900;
+  margin: 0;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  text-shadow: 0 0 10px rgba(241, 196, 15, 0.6), 0 0 30px rgba(241, 196, 15, 0.3);
+  animation: floatText 4s ease-in-out infinite;
+}
+
+.cyber-subtitle {
+  font-size: 1.5rem;
+  color: #a0aec0;
+  margin-top: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+@keyframes floatText {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+/* LATO DESTRO (Login e Lampada) */
+.login-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Tiene la lampada e la card centrate sul lato destro */
+}
+
+/* --- RESPONSIVE (Per cellulari) --- 
+@media (max-width: 850px) {
+  .content-wrapper {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+  .welcome-section {
+    padding-right: 0;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  .cyber-title {
+    font-size: 3.5rem;
+  }
+}
+*/
 /*
 .nav {
   position: absolute;
@@ -124,4 +211,37 @@
 
 .toggle-link:hover {
   color: white; /* Si illumina al passaggio del mouse */
+}
+
+/* --- ICONA MOSTRA/NASCONDI PASSWORD --- */
+
+/* Il contenitore che avvolge l'input e l'icona */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+  margin: 15px 0; /* Riprendiamo lo spazio verticale che aveva l'input */
+}
+
+/* Modifiche specifiche per l'input dentro al wrapper */
+.form-card .password-wrapper input {
+  margin: 0; /* Rimuoviamo il margine per evitare spazi doppi */
+  padding-right: 45px; /* FONDAMENTALE: crea spazio a destra così il testo non sbatte sull'occhio */
+}
+
+/* L'icona dell'occhio vera e propria */
+.eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%); /* Centra perfettamente in verticale */
+  cursor: pointer;
+  font-size: 1.2rem;
+  opacity: 0.6;
+  user-select: none; /* Impedisce che l'utente selezioni l'icona come testo */
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.eye-icon:hover {
+  opacity: 1; /* Si "accende" quando ci passi sopra */
+  transform: translateY(-50%) scale(1.1); /* Leggero effetto pop */
 }

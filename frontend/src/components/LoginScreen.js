@@ -8,6 +8,12 @@ function LoginScreen() {
   const [isOn, setIsOn] = useState(false); //stati di react
   const [isLogin, setIsLogin] = useState(true);
   const [message, setMessage] = useState({ text: '', color: '' });
+  const [showPassword, setShowPassword] = useState(false);
+  const [datiInput, setDatiInput] = useState({ username: '', password: '' });
+
+  const handleInputChange = (e) => {
+    setDatiInput({ ...datiInput, [e.target.name]: e.target.value });
+  };
   const appRef = useRef(null); // riferimento body per animazione GSAP
   //const navigate = useNavigate();
   const {loginGlobal} = useContext(AuthContext);
@@ -60,31 +66,79 @@ function LoginScreen() {
 
   return (
     <div className="app-container" data-on={isOn} ref={appRef}>
-      <p className="hint">{isOn ? "Luce accesa" : "Accendi la luce per accedere"}</p>
-      <button className="lamp-switch" onClick={toggleLamp} style={{ '--on': isOn ? 1 : 0 }}></button>
-      <div className="auth-container">
-        {isOn && (
-          <div className="form-card">
-            {isLogin ? (
-              <form onSubmit={(e) => handleAuth('login', e)}>
-                <h3>Login</h3>
-                <input name="username" type="text" placeholder="Username" />
-                <input name="password" type="password" placeholder="Password" />
-                <button type="submit" className="submit-btn">Accedi</button>
-                <span className="toggle-link" onClick={() => setIsLogin(false)}>Non hai un account?</span>
-              </form>
-            ) : (
-              <form onSubmit={(e) => handleAuth('register', e)}>
-                <h3>Registrazione</h3>
-                <input name="username" type="text" placeholder="Scegli Username" />
-                <input name="password" type="password" placeholder="Scegli Password" />
-                <button type="submit" className="submit-btn register">Crea Account</button>
-                <span className="toggle-link" onClick={() => setIsLogin(true)}>Hai già un account?</span>
-              </form>
+      
+      {/* Sfondo animato a griglia */}
+      <div className="gaming-background"></div>
+
+      <div className="content-wrapper">
+        
+        {/* LATO SINISTRO: Scritta di benvenuto */}
+        <div className="welcome-section">
+          <h1 className="cyber-title">BENVENUTI</h1>
+          <p className="cyber-subtitle">Entra nel mondo di Game Mania</p>
+        </div>
+
+        {/* LATO DESTRO: Lampada e Form */}
+        <div className="login-section">
+          <p className="hint">{isOn ? "Luce accesa" : "Accendi la luce per accedere"}</p>
+          <button className="lamp-switch" onClick={toggleLamp} style={{ '--on': isOn ? 1 : 0 }}></button>
+          
+          <div className="auth-container">
+            {isOn && (
+              <div className="form-card">
+                {isLogin ? (
+                  <form onSubmit={(e) => handleAuth('login', e)}>
+                    <h3>Login</h3>
+                    <input name="username" type="text" placeholder="Username" value={datiInput.username} onChange={handleInputChange} />
+                    <div className="password-wrapper">
+                      <input 
+                        name="password" 
+                        type={showPassword ? "text" : "password"} 
+                        placeholder="Password"
+                        value={datiInput.password} 
+                        onChange={handleInputChange}
+                      />
+                      <span 
+                        className="eye-icon" 
+                        onClick={() => setShowPassword(!showPassword)}
+                        title={showPassword ? "Nascondi password" : "Mostra password"}
+                      >
+                        {showPassword ? "🔒" : "👁️"} 
+                      </span>
+                    </div>
+                    <button type="submit" className="submit-btn">Accedi</button>
+                    <span className="toggle-link" onClick={() => setIsLogin(false)}>Non hai un account?</span>
+                  </form>
+                ) : (
+                  <form onSubmit={(e) => handleAuth('register', e)}>
+                    <h3>Registrazione</h3>
+                    <input name="username" type="text" placeholder="Scegli Username" value={datiInput.username} onChange={handleInputChange} />
+                    <div className="password-wrapper">
+                      <input 
+                        name="password" 
+                        type={showPassword ? "text" : "password"} 
+                        placeholder="Password"
+                        value={datiInput.password} 
+                        onChange={handleInputChange}
+                      />
+                      <span 
+                        className="eye-icon" 
+                        onClick={() => setShowPassword(!showPassword)}
+                        title={showPassword ? "Nascondi password" : "Mostra password"}
+                      >
+                        {showPassword ? "🔒" : "👁️"} 
+                      </span>
+                    </div>
+                    <button type="submit" className="submit-btn register">Crea Account</button>
+                    <span className="toggle-link" onClick={() => setIsLogin(true)}>Hai già un account?</span>
+                  </form>
+                )}
+                <p style={{ color: message.color, marginTop: '15px' }}>{message.text}</p>
+              </div>
             )}
-            <p style={{ color: message.color, marginTop: '15px' }}>{message.text}</p>
           </div>
-        )}
+        </div>
+
       </div>
     </div>
   );
