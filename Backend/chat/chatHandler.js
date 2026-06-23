@@ -15,11 +15,29 @@ module.exports = function(io) {
                 // 1. Prepariamo il pacchetto per MongoDB
                 const nuovoMessaggio = new Message({
                     username: datiMessaggio.username,
-                    testo: datiMessaggio.testo
+                    testo: datiMessaggio.testo,
+                    orario: Date.now()
                 });
                 
                 // 2. Lo salviamo fisicamente nel database in cloud
                 await nuovoMessaggio.save();
+
+                const MAX_MESSAGGI = 150;
+                const conteggio = await Message.countDocuments();
+        
+                if (conteggio > MAX_MESSAGGI) {
+                    // Individua i 150 messaggi più recenti presenti nel database
+                    const messaggiDaTenere = await Message.find()
+                        .sort({ orario: -1 })
+                        .limit(MAX_MESSAGGI)
+                        .select('_id');
+
+                    // Estrae solo la lista dei loro ID
+                    const idsDaTenere = messaggiDaTenere.map(m => m._id);
+
+                    // Cancella tutti i messaggi il cui ID NON è presente nella lista di quelli recenti
+                    await Message.deleteMany({ _id: { $nin: idsDaTenere } });
+                }
 
                 // 3. Se il salvataggio va a buon fine, lo mostriamo in tempo reale a tutti
                 io.emit('ricevi_messaggio', datiMessaggio);

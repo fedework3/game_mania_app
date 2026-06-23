@@ -101,8 +101,8 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/messages', async (req, res) => {
     try {
         // Cerca tutti i messaggi, li ordina per data (dal più vecchio al più recente) e prende gli ultimi 50
-        const storico = await Message.find().sort({ orario: 1 }).limit(50);
-        res.status(200).json(storico);
+        const storico = await Message.find().sort({ orario: -1 }).limit(150);
+        res.status(200).json(storico.reverse());
     } catch (errore) {
         res.status(500).json({ message: "Errore nel recupero dei messaggi" });
     }
