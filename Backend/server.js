@@ -111,8 +111,8 @@ app.get('/api/messages', async (req, res) => {
 
 
 // Avviamo il server
-const initChatHandler = require('./chat/chatHandler');
-initChatHandler(io); // Attiviamo la chat passandogli il server socket io
+const initLiveHandler = require('./chat/liveHandler');
+initLiveHandler(io); // Attiviamo la chat passandogli il server socket io
 
 const PORT = process.env.PORT || 5000;
 

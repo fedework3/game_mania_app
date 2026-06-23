@@ -85,6 +85,11 @@ function ChatBox() {
         ) : (
           messages.map((msg, index) => (
             <div key={index} className="chat-bubble">
+              <span style={{ fontSize: '0.75rem', color: '#8b9bb4', marginRight: '8px', fontFamily: 'monospace' }}>
+                {msg.orario 
+                  ? new Date(msg.orario).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+                  : ''}
+              </span>
               {/* Se scrivo io, coloro il mio nome di verde, altrimenti di blu */}
               <strong style={{ color: msg.username === username ? '#2ecc71' : '#3498db' }}>
                 {msg.username}:
