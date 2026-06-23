@@ -7,6 +7,7 @@ const socket = io(process.env.REACT_APP_BACKEND_URL);
 function ChatBox() {
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [utentiOnline, setUtentiOnline] = useState([]);
 
   // Prendiamo l'utente direttamente dal guscio globale! Non serve più jwtDecode qui!
   const { user } = useContext(AuthContext);
@@ -54,8 +55,13 @@ function ChatBox() {
       setMessages((messaggiPrecedenti) => [...messaggiPrecedenti, nuovoMessaggio]);
     });
 
+    socket.on('aggiorna_utenti_online', (listaUtenti) => {
+      setUtentiOnline(listaUtenti);
+    });
+
     return () => {
       socket.off('ricevi_messaggio');
+      socket.off('aggiorna_utenti_online');
     };
   }, [user]);
 
@@ -76,6 +82,26 @@ function ChatBox() {
   return (
     <div className="chat-column">
       <h2 className="column-title">Chat Globale 💬</h2>
+
+      <div className="online-users-panel">
+        
+        <div className="online-users-header">
+          🟢 Online ({utentiOnline.length})
+        </div>
+        
+        <div className="online-users-list">
+          {utentiOnline.length > 0 ? (
+            utentiOnline.map((nome, i) => (
+              <span key={i} className="online-user-badge">
+                {nome}
+              </span>
+            ))
+          ) : (
+            <span>Al momento sei l'unico connesso</span>
+          )}
+        </div>
+
+      </div>
 
       <div className="chat-messages">
         {messages.length === 0 ? (
