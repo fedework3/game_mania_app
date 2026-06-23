@@ -40,7 +40,7 @@ module.exports = function(io) {
                 }
 
                 // 3. Se il salvataggio va a buon fine, lo mostriamo in tempo reale a tutti
-                io.emit('ricevi_messaggio', datiMessaggio);
+                io.emit('ricevi_messaggio', nuovoMessaggio);
             } catch (errore) {
                 console.error("Errore durante il salvataggio del messaggio su DB:", errore);
             }
