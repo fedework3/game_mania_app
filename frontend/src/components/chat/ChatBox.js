@@ -27,7 +27,7 @@ function ChatBox() {
   }, [messages]);
 
   useEffect(() => {
-    // 1. NUOVO: Appena apro la chat, chiedo al backend gli ultimi 50 messaggi
+    // 1. NUOVO: Appena apro la chat, chiedo al backend gli ultimi 150 messaggi
     const caricaStorico = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/messages`);

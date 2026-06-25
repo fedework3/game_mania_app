@@ -104,6 +104,7 @@ const BattagliaNavale = () => {
     });
 
     return () => {
+      socket.emit('abbandona_coda');
       socket.off('partita_iniziata');
       socket.off('risultato_colpo');
       socket.off('colpo_subito');

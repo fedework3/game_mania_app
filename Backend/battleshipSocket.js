@@ -5,6 +5,12 @@ const gestisciBattagliaNavale = (io, socket) => {
     
     socket.on('giocatore_pronto', (dati) => {
         if (giocatoreInAttesa) {
+            if (giocatoreInAttesa.username === dati.username) {
+                // È la stessa persona! Aggiorniamo i suoi dati nel caso abbia cambiato le navi,
+                // ma NON facciamo partire la partita contro se stesso.
+                giocatoreInAttesa = { id: socket.id, username: dati.username, griglia: dati.griglia, socket: socket };
+                return; // Fermiamo l'esecuzione qui!
+            }
             const giocatore1 = giocatoreInAttesa;
             const giocatore2 = { id: socket.id, username: dati.username, griglia: dati.griglia };
 
@@ -23,6 +29,13 @@ const gestisciBattagliaNavale = (io, socket) => {
             giocatoreInAttesa = null;
         } else {
             giocatoreInAttesa = { id: socket.id, username: dati.username, griglia: dati.griglia, socket: socket };
+        }
+    });
+
+    socket.on('abbandona_coda', () => {
+        // Se la sedia è occupata proprio da chi se ne sta andando, la svuotiamo!
+        if (giocatoreInAttesa && giocatoreInAttesa.id === socket.id) {
+            giocatoreInAttesa = null;
         }
     });
 
