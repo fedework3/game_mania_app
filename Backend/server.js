@@ -19,7 +19,7 @@ const io = new Server(server, {
     }
 });
 
-const JWT_SECRET = "chiave_token";//chiave segreta per i token
+const JWT_SECRET = process.env.JWT_SECRET;//chiave segreta per i token
 
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
