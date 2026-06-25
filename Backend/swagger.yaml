@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  title: Game Mania API Backend
+  description: Documentazione delle API REST per l'autenticazione e la gestione dello storico chat di Game Mania.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000
+    description: Server di sviluppo locale
+  - url: https://game-mania-app.onrender.com
+    description: Server (Render)
+paths:
+  /api/register:
+    post:
+      summary: Registra un nuovo utente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: Utente registrato con successo
+        '400':
+          description: Username già in uso
+        '500':
+          description: Errore del server
+
+  /api/login:
+    post:
+      summary: Autentica un utente e restituisce un token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login approvato (Restituisce la stringa del Token)
+        '401':
+          description: Credenziali errate (Username o Password)
+        '500':
+          description: Errore del server
+
+  /api/messages:
+    get:
+      summary: Recupera lo storico dei messaggi della chat
+      description: Restituisce gli ultimi 150 messaggi inviati nella chat globale, ordinati cronologicamente (dal più vecchio al più recente). Il backend implementa una logica di capping automatico (Rolling Buffer) per mantenere un massimo di 150 documenti totali nel database.
+      responses:
+        '200':
+          description: Storico dei messaggi recuperato con successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      description: Identificativo univoco autogenerato
+                    username:
+                      type: string
+                      description: Autore del messaggio
+                    testo:
+                      type: string
+                      description: Corpo del messaggio
+                    orario:
+                      type: string
+                      format: date-time
+                      description: Timestamp di invio del messaggio
+        '500':
+          description: Errore interno del server durante il recupero dei messaggi
