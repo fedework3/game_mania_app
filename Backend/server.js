@@ -23,9 +23,10 @@ const JWT_SECRET = "chiave_token";//chiave segreta per i token
 
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
+const path = require('path');
 
-// Carica il file YAML dello Swagger
-const swaggerDocument = YAML.load('./swagger.yaml');
+// Usiamo path.join e __dirname per un percorso sicuro
+const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
 
 app.use(cors());
 app.use(express.json());
