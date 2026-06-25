@@ -21,8 +21,16 @@ const io = new Server(server, {
 
 const JWT_SECRET = "chiave_token";//chiave segreta per i token
 
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+
+// Carica il file YAML dello Swagger
+const swaggerDocument = YAML.load('./swagger.yaml');
+
 app.use(cors());
 app.use(express.json());
+// Crea la rotta per la documentazione interattiva
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // --- 1. CONNESSIONE A MONGODB ---
 
