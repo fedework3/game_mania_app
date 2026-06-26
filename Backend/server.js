@@ -14,12 +14,12 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "https://game-mania-app-frontend.onrender.com",
+        origin: process.env.FRONTEND_URL || "http://localhost:3000",
         methods: ["GET", "POST"]
     }
 });
 
-const JWT_SECRET = process.env.JWT_SECRET;//chiave segreta per i token
+const JWT_SECRET = process.env.JWT_SECRET;//chiave segreta per i token 
 
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
