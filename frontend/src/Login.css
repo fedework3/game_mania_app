@@ -23,11 +23,11 @@
 /* SFONDO GAMING ANIMATO (Griglia in movimento) */
 .gaming-background {
   position: absolute;
-  top: -50%; left: -50%; right: -50%; bottom: -50%;
+  top: -50%; left: -50%; right: -50%; bottom: -50%;/* sfondo grande il doppio */
   background-image: 
     linear-gradient(rgba(241, 196, 15, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(241, 196, 15, 0.05) 1px, transparent 1px);
-  background-size: 50px 50px;
+  background-size: 50px 50px;/* disegno griglie */
   z-index: 0;
   transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
   animation: gridMove 10s linear infinite;
@@ -37,7 +37,7 @@
 @keyframes gridMove {
   0% { background-position: 0 0; }
   100% { background-position: 0 50px; }
-}
+}/*la griglia sottostante che si muove*/
 
 /* --- CONTENITORE DIVISO A METÀ --- */
 .content-wrapper {
@@ -53,18 +53,18 @@
 
 /* LATO SINISTRO (Testo) */
 .welcome-section {
-  flex: 1;
+  flex: 1; /*prende tutto lo spazio libero*/
   text-align: left;
-  padding-right: 50px;
+  padding-right: 50px; /*Crea un cuscinetto di spazio vuoto di 50 pixel sulla destra*/
 }
 
 .cyber-title {
   font-size: 5rem;
-  font-weight: 900;
+  font-weight: 900;/*carattere spesso*/
   margin: 0;
   color: #fff;
   text-transform: uppercase;
-  letter-spacing: 5px;
+  letter-spacing: 5px;/*Aggiunge 5 pixel di spazio tra una lettera e l'altra*/
   text-shadow: 0 0 10px rgba(241, 196, 15, 0.6), 0 0 30px rgba(241, 196, 15, 0.3);
   animation: floatText 4s ease-in-out infinite;
 }
@@ -80,7 +80,7 @@
 @keyframes floatText {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-15px); }
-}
+}/* animazione continua e ciclica*/
 
 /* LATO DESTRO (Login e Lampada) */
 .login-section {
@@ -158,7 +158,7 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
-}
+} /*animazione dall'inizio alla fine*/
 
 .form-card input {
   display: block;
@@ -173,20 +173,20 @@
 }
 .form-card input:focus {
   outline: none;
-  border-color: #f1c40f; /* Un bell'effetto quando l'utente clicca sull'input */
+  border-color: #f1c40f; /* effetto quando l'utente clicca sull'input */
 }
 
 /* bottone d'invio */
 .submit-btn {
   background: #f1c40f;
   color: #121417;
-  font-weight: bold;
+  font-weight: bold; /*testo in grassetto*/
   cursor: pointer;
   width: 100%;
   padding: 12px;
   box-sizing: border-box;
   border: none;
-  border-radius: 6px;
+  border-radius: 6px; /*arrotonda i bordi*/
   margin-top: 20px;
   transition: transform 0.2s, background 0.2s; /* Aggiunta transizione fluida */
 }
@@ -200,10 +200,10 @@
 }
 
 .toggle-link {
-  font-size: 13px;
+  font-size: 13px; /*grandezza testo*/
   color: #aaa;
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: underline; /*il testo viene sottolineato*/
   display: block;
   margin-top: 15px;
   transition: color 0.2s;
@@ -213,7 +213,7 @@
   color: white; /* Si illumina al passaggio del mouse */
 }
 
-/* --- ICONA MOSTRA/NASCONDI PASSWORD --- */
+/*  ICONA MOSTRA/NASCONDI PASSWORD  */
 
 /* Il contenitore che avvolge l'input e l'icona */
 .password-wrapper {
@@ -224,8 +224,8 @@
 
 /* Modifiche specifiche per l'input dentro al wrapper */
 .form-card .password-wrapper input {
-  margin: 0; /* Rimuoviamo il margine per evitare spazi doppi */
-  padding-right: 45px; /* FONDAMENTALE: crea spazio a destra così il testo non sbatte sull'occhio */
+  margin: 0; /* Rimuovo il margine per evitare spazi doppi */
+  padding-right: 45px; /* crea spazio a destra così il testo non sbatte sull'occhio */
 }
 
 /* L'icona dell'occhio vera e propria */
@@ -233,9 +233,9 @@
   position: absolute;
   right: 12px;
   top: 50%;
-  transform: translateY(-50%); /* Centra perfettamente in verticale */
-  cursor: pointer;
-  font-size: 1.2rem;
+  transform: translateY(-50%); /* Centra perfettamente in verticale con top scritto prima */
+  cursor: pointer; /* trasforma la freccia del cursone in una mano*/
+  font-size: 1.2rem; /* grandezza icona*/
   opacity: 0.6;
   user-select: none; /* Impedisce che l'utente selezioni l'icona come testo */
   transition: opacity 0.2s ease, transform 0.2s ease;

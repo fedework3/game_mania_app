@@ -4,8 +4,6 @@ info:
   description: Documentazione delle API REST per l'autenticazione e la gestione dello storico chat di Game Mania.
   version: 1.0.0
 servers:
-  - url: http://localhost:5000
-    description: Server di sviluppo locale
   - url: https://game-mania-app.onrender.com
     description: Server (Render)
 paths:

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { AuthContext } from '../../context/AuthContext'; // contesto globale
-// Connessione socket isolata per questo componente
-const socket = io(process.env.REACT_APP_BACKEND_URL);
+// Connessione socket per questo componente
+const socket = io(process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000');
 
 function ChatBox() {
   const [chatMessage, setChatMessage] = useState('');

@@ -118,7 +118,7 @@
   background-image: linear-gradient(to bottom, transparent, var(--neon-cyan), transparent);
   box-shadow: 0 0 12px 2px var(--neon-cyan);
   z-index: 10; /* Messo in disparte */
-  pointer-events: none; /* TRUCCO MAGICO: i click del mouse lo trapassano! */
+  pointer-events: none; /* i click del mouse lo trapassano! */
 }
 
 /* Bordo luminoso Rosa a Destra della chat */
@@ -150,9 +150,12 @@
 
 /* GRIGLIA E CARD DEI GIOCHI */
 .games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 25px;
+  display: grid;/*Trasforma il contenitore in una griglia */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));/* minmax(220px, 1fr) Ogni cella/card del gioco deve essere larga almeno 220 pixel
+    ma se c'è spazio extra, può espandersi fino a occupare 1 frazione (1fr) dello spazio disponibile.
+    auto-fit vede quanto è largo lo schermo dell'utente in questo momento e infila automaticamente quante più card possibili in una sola riga, rispettando la regola dei 220px.
+    repeat Ripete questa logica all'infinito per tutte le card presenti */
+  gap: 25px;/*crea una spaziatura di 25 pixel sia in orizzontale che in verticale tra tutte le celle della griglia */
   margin-top: 10px;
 }
 
@@ -175,7 +178,7 @@
 .game-img {
   width: 100%;
   height: 160px;
-  object-fit: cover;
+  object-fit: cover;/*Riempie il contenitore mantenendo le proporzioni originali dell'immagine senza  deformarla*/
   border-radius: 8px;
 }
 
@@ -239,15 +242,13 @@
   flex-direction: column;
   gap: 12px;
   
-  /* ABILITIAMO LO SCROLLBAR CORRETTO */
   overflow-y: scroll; /* Forza lo scrollbar solo verticale */
   overflow-x: hidden;
   scroll-behavior: smooth;
-  
   position: relative;
 }
 
-/* Bordo luminoso Ciano a Sinistra (Integrazione perfetta) */
+/* Bordo luminoso Ciano a Sinistra  */
 .chat-messages::after {
   content: "";
   position: absolute;
@@ -260,7 +261,7 @@
   z-index: 1;
 }
 
-/* Bordo luminoso Rosa a Destra (Integrazione perfetta) */
+/* Bordo luminoso Rosa a Destra */
 .chat-messages::before {
   content: "";
   position: absolute;
@@ -273,20 +274,20 @@
   z-index: 1;
 }
 
-/* --- LA PERSONALIZZAZIONE DELLA SCROLLBAR GLOBALE (Tech-Dark) --- */
+/* LA PERSONALIZZAZIONE DELLA SCROLLBAR GLOBALE (Tech-Dark) */
 
 .dashboard-wrapper *::-webkit-scrollbar {
   width: 6px; 
-}
+}/* Seleziona l'intera barra di scorrimento di qualsiasi elemento (*) all'interno della Dashboard. */
 
 .dashboard-wrapper *::-webkit-scrollbar-track {
   background: transparent; 
-}
+}/* Il "track" binario vuoto su cui scorre la maniglia della barra */
 
 .dashboard-wrapper *::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.15) !important; 
   border-radius: 10px;
-}
+}/* Il "thumb" parte fisica della barra che l'utente può cliccare e trascinare su e giù */
 
 .dashboard-wrapper *::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25) !important;
@@ -294,7 +295,7 @@
 
 .chat-bubble {
   font-size: 14px;
-  /* MODIFICATO: Bolle molto scure che si fondono con lo sfondo */
+  /* Bolle molto scure che si fondono con lo sfondo */
   background: rgba(25, 32, 44, 0.6); 
   padding: 10px 15px;
   border-radius: 8px;
@@ -307,7 +308,7 @@
 }
 
 .chat-input-form {
-  padding: 15px 20px; /* Ripristiniamo il padding qui */
+  padding: 15px 20px; /* Ripristino il padding qui */
   display: flex;
   gap: 10px;
   align-items: center;
@@ -319,11 +320,11 @@
 
 .chat-input {
   flex: 1;
-  height: 45px; /* NUOVO: Altezza fissa uguale al bottone */
-  padding: 0 15px; /* MODIFICATO: Spazio solo a destra e sinistra, l'altezza la gestisce "height" */
-  box-sizing: border-box; /* NUOVO: Evita che i bordi sfasino la misura */
+  height: 45px; /* Altezza fissa uguale al bottone */
+  padding: 0 15px; /*Spazio solo a destra e sinistra, l'altezza la gestisce "height" */
+  box-sizing: border-box; /* Evita che i bordi sfasino la misura */
   border: none;
-  background: #0d111c; /* Molto scuro */
+  background: #0d111c; 
   border-radius: 6px;
   color: white;
   font-size: 14px;
@@ -335,9 +336,9 @@
 }
 
 .chat-submit {
-  height: 45px; /* NUOVO: Stessa identica altezza dell'input! */
-  padding: 0 20px; /* MODIFICATO: Spazio solo a destra e sinistra */
-  box-sizing: border-box; /* NUOVO */
+  height: 45px; 
+  padding: 0 20px; 
+  box-sizing: border-box; 
   background: var(--button-send);
   color: #121417;
   border: none;
@@ -352,7 +353,7 @@
   box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
 }
 
-/* --- PANNELLO UTENTI ONLINE --- */
+/* PANNELLO UTENTI ONLINE */
 
 .online-users-panel {
   padding: 10px;
@@ -371,7 +372,7 @@
 .online-users-list {
   color: #bdc3c7;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap;/* Se lo spazio orizzontale finisce, prende gli elementi in eccesso e li manda a capo su una nuova riga sottostante */
   gap: 8px;
 }
 

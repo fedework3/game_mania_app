@@ -1,8 +1,5 @@
-/* --- App.css (Regole Globali) --- */
-
-/* 1. RESET GLOBALE: Azzera i margini fastidiosi di default dei browser
-L'asterisco (*) è un selettore universale. 
-Serve a dire: "Qualsiasi elemento io crei su React, non mettergli bordi o margini a sorpresa".
+/* Azzera i margini fastidiosi di default dei browser
+ (*)  selettore universale. 
 Mettere il background-color scuro nel body assicura che, 
 se per un millisecondo React sta caricando la Dashboard o il Login, 
 l'utente non venga accecato da una schermata bianca, ma veda già una base scura. */
@@ -12,13 +9,13 @@ l'utente non venga accecato da una schermata bianca, ma veda già una base scura
   box-sizing: border-box;
 }
 
-/* 2. BODY BASE: Imposta il font e uno sfondo scuro di base per evitare "lampi bianchi" durante i caricamenti */
+/* Imposta il font e uno sfondo scuro di base per evitare "lampi bianchi" durante i caricamenti */
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #0f172a; /* Uno sfondo scuro generico */
+  background-color: #0f172a; 
   color: #f8fafc; /* Testo chiaro di base */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;/* browser basati sul motore WebKit (ovvero Google Chrome, Safari, Microsoft Edge e Opera). font visivamente più sottile */
+  -moz-osx-font-smoothing: grayscale;/* è rivolto a Mozilla Firefox in esecuzione su sistemi Apple (macOS). font visivamente più sottile */
 }
 
 /*  Rimuovi la sottolineatura di default da tutti i link del sito */
