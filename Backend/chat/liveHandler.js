@@ -9,10 +9,10 @@ module.exports = function(io) {
         socket.on('imposta_username', (username) => {
             socket.username = username; // vediamo il nome che manda il frontend e Salviamo il nome qui
             console.log(`🟢 ${socket.username} si è connesso alla chat!`);
-            // NUOVO: Aggiungiamo l'utente al registro (usiamo socket.id come chiave univoca)
+            // viene aggiunto l'utente al registro (usiamo socket.id come chiave univoca)
             utentiConnessi.set(socket.id, username);
             
-            // NUOVO: Rimuoviamo eventuali doppioni (se uno ha due schede aperte) e inviamo la lista a tutti
+            // vengono rimossi eventuali doppioni (se uno ha due schede aperte) e si invia la lista a tutti
             const listaUtentiUnici = [...new Set(utentiConnessi.values())];
             io.emit('aggiorna_utenti_online', listaUtentiUnici);
         });
@@ -20,14 +20,14 @@ module.exports = function(io) {
         // Ascolta i messaggi in arrivo
         socket.on('invia_messaggio', async (datiMessaggio) => {
             try {
-                // 1. Prepariamo il pacchetto per MongoDB
+                // pacchetto per MongoDB
                 const nuovoMessaggio = new Message({
                     username: datiMessaggio.username,
                     testo: datiMessaggio.testo,
                     orario: Date.now()
                 });
                 
-                // 2. Lo salviamo fisicamente nel database in cloud
+                // viene salvato fisicamente nel database in cloud
                 await nuovoMessaggio.save();
 
                 const MAX_MESSAGGI = 150;
@@ -47,7 +47,7 @@ module.exports = function(io) {
                     await Message.deleteMany({ _id: { $nin: idsDaTenere } });
                 }
 
-                // 3. Se il salvataggio va a buon fine, lo mostriamo in tempo reale a tutti
+                // Se il salvataggio va a buon fine, viene mostrato in tempo reale a tutti
                 io.emit('ricevi_messaggio', nuovoMessaggio);
             } catch (errore) {
                 console.error("Errore durante il salvataggio del messaggio su DB:", errore);
@@ -59,11 +59,11 @@ module.exports = function(io) {
             //inseriamo backticks (`). servono per inserire le variabili all'interno del testo.
             //altimenti era: console.log("🔴" +socket.username+ "si è disconnesso`);
             
-            // NUOVO: Cancelliamo l'utente dal registro quando chiude la pagina
+            // viene cancellato l'utente dal registro quando chiude la pagina
             if (utentiConnessi.has(socket.id)) {
                 utentiConnessi.delete(socket.id);
                 
-                // NUOVO: Annunciamo a tutti la lista aggiornata (con un utente in meno)
+                // viene annunciato a tutti la lista aggiornata (con un utente in meno)
                 const listaUtentiUnici = [...new Set(utentiConnessi.values())];
                 io.emit('aggiorna_utenti_online', listaUtentiUnici);
             }

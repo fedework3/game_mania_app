@@ -6,10 +6,10 @@ const gestisciBattagliaNavale = (io, socket) => {
     socket.on('giocatore_pronto', (dati) => {
         if (giocatoreInAttesa) {
             if (giocatoreInAttesa.username === dati.username) {
-                // È la stessa persona! Aggiorniamo i suoi dati nel caso abbia cambiato le navi,
+                // se è la stessa persona vengono aggiornati i dati nel caso abbia cambiato le navi,
                 // ma NON facciamo partire la partita contro se stesso.
                 giocatoreInAttesa = { id: socket.id, username: dati.username, griglia: dati.griglia, socket: socket };
-                return; // Fermiamo l'esecuzione qui!
+                return; // qui si ferma l'esecuzione
             }
             const giocatore1 = giocatoreInAttesa;
             const giocatore2 = { id: socket.id, username: dati.username, griglia: dati.griglia };
@@ -33,7 +33,7 @@ const gestisciBattagliaNavale = (io, socket) => {
     });
 
     socket.on('abbandona_coda', () => {
-        // Se la sedia è occupata proprio da chi se ne sta andando, la svuotiamo!
+        // Se la sedia è occupata proprio da chi se ne sta andando, viene svuotata
         if (giocatoreInAttesa && giocatoreInAttesa.id === socket.id) {
             giocatoreInAttesa = null;
         }
@@ -54,10 +54,11 @@ const gestisciBattagliaNavale = (io, socket) => {
         if (cellaBersaglio >= 10) {
             const idNave = cellaBersaglio;
             esito = 3; // 3 = COLPITO (X Rossa)
-            statoAvversario.miaGriglia[riga][colonna] = -idNave; // Segniamo il pezzo come distrutto
+            statoAvversario.miaGriglia[riga][colonna] = -idNave; // si segna il pezzo come distrutto
 
-            // CERCHIAMO SE CI SONO ALTRI PEZZI DI QUESTA NAVE
+            // si cerca se ci sono altri pezzi della nave
             const naveSopravvissuta = statoAvversario.miaGriglia.some(r => r.includes(idNave));
+            //con "some" legge array e si ferma quando è soddisfatta la condizione
 
             if (!naveSopravvissuta) {
                 esito = 4; // 4 = AFFONDATO! (Fuoco)

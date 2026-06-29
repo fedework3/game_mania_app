@@ -16,7 +16,7 @@ const FLOTTA_INIZIALE = [
   { id: 16, size: 1 }
 ];
 
-// --- ICONE SVG BLINDATE ---
+//  ICONE SVG BLINDATE 
 const IconaNave = ({ stile }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '28px', height: '28px', filter: 'drop-shadow(0 0 5px #06b6d4)', transition: 'transform 0.3s', ...stile }}>
     <path d="M2 21c.6.5 1.2 1 2.5 1 1.3 0 2.5-.5 3.2-1 .7-.5 1.2-1 2.5-1 1.3 0 2.5.5 3.2 1 .7.5 1.2 1 2.5 1 1.3 0 2.5-.5 3.2-1 .7-.5 1.2-1 2.5-1 1.3 0 2.5.5 3.2 1"/>
@@ -24,7 +24,7 @@ const IconaNave = ({ stile }) => (
     <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/>
     <path d="M12 10v4"/>
   </svg>
-);
+);//creo le immagini, trasparente, bordi ciano e spessi 2, arrotondo le linee, effetto neon e prndo tutti gli stili personalizzati
 
 const IconaAcqua = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ width: '24px', height: '24px', filter: 'drop-shadow(0 0 6px #22d3ee)' }}>
@@ -46,12 +46,12 @@ const IconaFuoco = () => (
 );
 
 
-// --- IL COMPONENTE PRINCIPALE ---
+//  IL COMPONENTE PRINCIPALE 
 const BattagliaNavale = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext); 
 
-  const [grigliaPersonale, setGrigliaPersonale] = useState(Array.from({ length: 10 }, () => Array(10).fill(0)));
+  const [grigliaPersonale, setGrigliaPersonale] = useState(Array.from({ length: 10 }, () => Array(10).fill(0)));// un array vuoto con 10 scompartimenti che rappresentano le 10 righe nel tabellone e poi chiamo una callback per riempire ognuna delle 10 righe con un nuovo array da 10 posti
   const [grigliaAttacchi, setGrigliaAttacchi] = useState(Array.from({ length: 10 }, () => Array(10).fill(0)));
   const [naviPiazzate, setNaviPiazzate] = useState([]);
   
@@ -70,12 +70,12 @@ const BattagliaNavale = () => {
 
     socket.on('risultato_colpo', ({ riga, colonna, esito, tuoTurno, coordinateAffondate }) => {
       setGrigliaAttacchi(prev => {
-        const nuova = prev.map(row => [...row]);
+        const nuova = prev.map(row => [...row]);//prende la griglia precedente e ne crea una copia 
         if (esito === 4 && coordinateAffondate) coordinateAffondate.forEach(coord => nuova[coord.r][coord.c] = 4);
         else nuova[riga][colonna] = esito;
         return nuova;
       });
-      // NUOVA LOGICA: Se affondiamo una nave, calcoliamo quanto era grande e la togliamo!
+      // Se si affonda una nave, si calcola quanto era grande e la si toglie
       if (esito === 4 && coordinateAffondate) {
         const dimensioneAffondata = coordinateAffondate.length;
         setFlottaNemica(prev => {
@@ -118,9 +118,9 @@ const BattagliaNavale = () => {
 
   
 
-  // 1. LOGICA DI PIAZZAMENTO (Automatico Orizzontale o Verticale)
+  // LOGICA DI PIAZZAMENTO ( Orizzontale o Verticale)
   const gestisciClickPersonale = (riga, col) => {
-    // NUOVO: Sicurezza bordi per il drag & drop
+    //  Sicurezza bordi per il drag & drop
     if (riga < 0 || col < 0 || riga > 9 || col > 9) return; 
     if (isPronto || naviDaPiazzare.length === 0) return;
     
@@ -141,7 +141,7 @@ const BattagliaNavale = () => {
 
     if (orizzontaleValida) {
       isVert = false;
-      for (let i = 0; i < lunghezza; i++) posizioniValide.push([riga, col + i]);
+      for (let i = 0; i < lunghezza; i++) posizioniValide.push([riga, col + i]);//se lo mettp in orizzontale si sposta a destra per tutta la lunghezza della nave
     } else {
       // Se non c'è spazio, prova in Verticale
       let verticaleValida = true;
@@ -156,7 +156,7 @@ const BattagliaNavale = () => {
         isVert = true;
         for (let i = 0; i < lunghezza; i++) posizioniValide.push([riga + i, col]);
       } else {
-        return; // Non entra in nessun modo, ignora il click!
+        return; // Non entra in nessun modo, ignora il click
       }
     }
 
@@ -165,7 +165,7 @@ const BattagliaNavale = () => {
     setGrigliaPersonale(nuovaGriglia);
     
     setNaviPiazzate(prev => [...prev, { id: naveCorrente.id, size: lunghezza, riga, col, isVerticale: isVert }]);
-    setNaviDaPiazzare(prev => prev.slice(1));
+    setNaviDaPiazzare(prev => prev.slice(1));// aggiornamneto lista navi da piazzare nn toccando l'array originale ma ne crea uno nuovo
   };
 
   const gestisciSpostamentoNave = (idNave, rigaDrop, colDrop, offset = 0) => {
@@ -185,10 +185,12 @@ const BattagliaNavale = () => {
     let valida = true;
     let posizioniValide = [];
 
-    // 1. Creiamo una griglia "simulata" cancellando la nave dalla sua vecchia posizione
+    // griglia "simulata" cancellando la nave dalla sua vecchia posizione
+    // il primo map prende il tabelonne e controlla riga per riga
+    // il secondo map prende la riga e controlla cella per cella
     const grigliaSimulata = grigliaPersonale.map(row => row.map(c => c === idNave ? 0 : c));
 
-    // 2. Controlliamo se entra nella nuova posizione, mantenendo la sua rotazione attuale (Orizzontale o Verticale)
+    // si controlla se entra nella nuova posizione, mantenendo la sua rotazione attuale (Orizzontale o Verticale)
     if (nave.isVerticale) {
       if (nuovaRiga + nave.size > 10) valida = false;
       else {
@@ -207,7 +209,7 @@ const BattagliaNavale = () => {
       }
     }
 
-    // 3. Se la nuova posizione è valida, aggiorniamo TUTTO in un colpo solo!
+    // Se la nuova posizione è valida, si aggiorna tutto
     if (valida) {
       posizioniValide.forEach(([r, c]) => grigliaSimulata[r][c] = idNave);
       setGrigliaPersonale(grigliaSimulata); // Aggiorna le caselle d'acqua
@@ -221,11 +223,11 @@ const BattagliaNavale = () => {
     // la funzione finisce qui e la nave torna al suo posto originale
   };
 
-  // 2. LOGICA DI ROTAZIONE (Al Click)
+  //  LOGICA DI ROTAZIONE (Al Click)
   const ruotaNave = (idNave) => {
     if (isPronto) return;
     const nave = naviPiazzate.find(n => n.id === idNave);
-    if (!nave || nave.size === 1) return; // Non serve ruotare navi da 1 casella
+    if (!nave || nave.size === 1) return; // Non ruota navi da 1 casella
 
     const nuovaVerticale = !nave.isVerticale;
     let valida = true;
@@ -260,7 +262,7 @@ const BattagliaNavale = () => {
     }
   };
 
-  // 3. LOGICA DI RIMOZIONE (Riprendi Nave)
+  // LOGICA DI RIMOZIONE (Riprendi Nave)
   const riprendiNave = (idNave) => {
     if (isPronto) return;
     const nave = naviPiazzate.find(n => n.id === idNave);
@@ -338,12 +340,12 @@ const BattagliaNavale = () => {
                     onMouseDown={(e) => {
                       const rect = e.currentTarget.getBoundingClientRect();
                       const offsetX = e.clientX - rect.left;
-                      // Dividiamo per 42 (la larghezza di una cella) per capire l'indice
+                      // si divide per 42 (la larghezza di una cella) per capire l'indice
                       e.currentTarget.dataset.offset = Math.floor(offsetX / 42);
                     }}
                     onDragStart={(e) => {
                       const offset = e.currentTarget.dataset.offset || 0;
-                      // Passiamo una stringa composta da "tipo_azione|offset"
+                      // Si passa una stringa composta da "tipo_azione|offset"
                       // Necessario per far capire al browser che stiamo trascinando qualcosa
                       e.dataTransfer.setData('text/plain', `nuova_nave|${offset}`);
                     }}
@@ -386,9 +388,9 @@ const BattagliaNavale = () => {
             
             <div className="titolo-radar-nemico">
               <h4 style={{ marginBottom: '15px' }}>Radar Nemico</h4>
-            </div> {/* <-- Questo div mancava e sballava tutto! */}
+            </div> 
 
-            {/* NUOVO CONTENITORE: Affianca la griglia e la colonna laterale */}
+            {/*  Affianca la griglia e la colonna laterale */}
             <div className="radar-e-flotta">
               
               {/* LA GRIGLIA RIMANE A SINISTRA */}
@@ -399,7 +401,7 @@ const BattagliaNavale = () => {
                 {flottaNemica.length > 0 ? (
                   flottaNemica.map((dimensione, idx) => (
                     <div key={idx} className="mini-capsula-nemica" style={{ width: `${dimensione * 28}px`, height: '26px' }} title={`Nave da ${dimensione} caselle`}>
-                      {/* MODIFICATO: Ruotiamo l'icona di 90 gradi per farla stare dritta nella capsula */}
+                      {/* Ruotiamo l'icona di 90 gradi per farla stare dritta nella capsula */}
                       <IconaNave stile={{ width: '14px', height: '14px'}} />
                     </div>
                   ))
@@ -417,7 +419,7 @@ const BattagliaNavale = () => {
   );
 };
 
-// --- COMPONENTE GRIGLIA ---
+// COMPONENTE GRIGLIA 
 const Griglia = ({ dati, onClick, isRadar = false, naviPiazzate = [], isPronto, ruotaNave, riprendiNave, spostaNave }) => {
   const lettere = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
   
@@ -524,12 +526,12 @@ const Griglia = ({ dati, onClick, isRadar = false, naviPiazzate = [], isPronto, 
                 e.preventDefault();
                 e.stopPropagation(); // Evita conflitti con la griglia sotto
 
-                // 1. Calcoliamo dove si trova il mouse dentro la nave-scudo
+                // qui calcola dove si trova il mouse dentro la nave-scudo
                 const rect = e.currentTarget.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
 
-                // 2. Troviamo la cella della griglia che si nasconde sotto al mouse!
+                // Trova la cella della griglia che si nasconde sotto al mouse
                 const cellaDropRiga = nave.isVerticale ? nave.riga + Math.floor(y / 42) : nave.riga;
                 const cellaDropColonna = nave.isVerticale ? nave.col : nave.col + Math.floor(x / 42);
 
@@ -540,7 +542,7 @@ const Griglia = ({ dati, onClick, isRadar = false, naviPiazzate = [], isPronto, 
                 const parts = draggedData.split('|');
                 const tipo = parts[0];
 
-                // 4. Passiamo le coordinate esatte alla funzione, proprio come se avessimo colpito l'acqua!
+                // Passo le coordinate esatte alla funzione, proprio come se avessimo colpito l'acqua!
                 if (tipo === 'nuova_nave') {
                   const offset = parseInt(parts[1], 10);
                   onClick(cellaDropRiga, cellaDropColonna - offset);

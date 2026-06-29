@@ -1,9 +1,9 @@
 require('dotenv').config();// va a prendere il file .env
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose'); // Nuova libreria per MongoDB
-const bcrypt = require('bcrypt'); // NUOVO: Per criptare le password
-const jwt = require('jsonwebtoken'); // NUOVO: Per i token di sessione
+const mongoose = require('mongoose'); // libreria per MongoDB
+const bcrypt = require('bcrypt'); //  Per criptare le password
+const jwt = require('jsonwebtoken'); // Per i token di sessione
 const http = require('http');
 const { Server } = require('socket.io');
 const gestisciBattagliaNavale = require('./battleshipSocket');
@@ -33,14 +33,14 @@ app.use(express.json());
 // Crea la rotta per la documentazione interattiva
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-// --- 1. CONNESSIONE A MONGODB ---
+//  CONNESSIONE A MONGODB 
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("🟢 Connesso a MongoDB con successo!"))
     .catch(err => console.error("🔴 Errore di connessione a MongoDB:", err));
 
-// --- 2. CREAZIONE DEL MODELLO DATI ---
-// Definiamo come è fatto un Utente nel nostro database
+//  CREAZIONE DEL MODELLO DATI 
+// Definisco lo schema per come è fatto un Utente nel database
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true } 
@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// --- 3. ROTTA DI REGISTRAZIONE (Per popolare il database) ---
+// ROTTA DI REGISTRAZIONE (Per popolare il database) ---
 app.post('/api/register', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -59,7 +59,7 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json({ error: "Username già in uso" });
         }
 
-        // NUOVO: Criptiamo la password prima di salvarla! (10 è il livello di sicurezza)
+        // viene criptata la password prima di salvarla (10 è il livello di sicurezza)
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Crea e salva il nuovo utente nel database
@@ -72,7 +72,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// --- 4. ROTTA DI LOGIN (Aggiornata con MongoDB) ---
+// ROTTA DI LOGIN 
 app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -89,7 +89,7 @@ app.post('/api/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (isMatch) {
-            // NUOVO: La password è giusta! Creiamo il Token JWT valido per 1 ora
+            // se la password è giusta! Creiamo il Token JWT valido per 1 ora
             const token = jwt.sign(
                 { userId: user._id, username: user.username }, 
                 JWT_SECRET, 
@@ -106,10 +106,10 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// Nuova rotta API per recuperare lo storico della chat
+// rotta API per recuperare lo storico della chat
 app.get('/api/messages', async (req, res) => {
     try {
-        // Cerca tutti i messaggi, li ordina per data (dal più vecchio al più recente) e prende gli ultimi 50
+        // Cerca tutti i messaggi, li ordina per data (dal più vecchio al più recente) e prende gli ultimi 150
         const storico = await Message.find().sort({ orario: -1 }).limit(150);
         res.status(200).json(storico.reverse());
     } catch (errore) {

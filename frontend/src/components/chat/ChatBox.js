@@ -9,25 +9,25 @@ function ChatBox() {
   const [messages, setMessages] = useState([]);
   const [utentiOnline, setUtentiOnline] = useState([]);
 
-  // Prendiamo l'utente direttamente dal guscio globale! Non serve più jwtDecode qui!
+  // Prendiamo l'utente direttamente dal guscio globale
   const { user } = useContext(AuthContext);
   const username = user ? user.username : 'Ospite';
 
-  // NUOVO: Creiamo l'ancora invisibile
+  // ho creato l'ancora invisibile che mi porta sempre verso l'ultimo messaggio inserito
   const fineChatRef = useRef(null);
 
-  // NUOVO: Funzione che fa scorrere la pagina verso l'ancora in modo fluido
+  // Funzione che fa scorrere la pagina verso l'ancora in modo fluido
   const scorriInBasso = () => {
     fineChatRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  };// il ? Si chiama Optional Chaining. Serve a evitare che il sito vada in crash se per qualche motivo il div non è ancora stato caricato sulla pagina
 
-  // NUOVO: Diciamo a React di scorrere in basso ogni volta che l'array "messages" cambia
+  // Dico a React di scorrere in basso ogni volta che l'array "messages" cambia
   useEffect(() => {
     scorriInBasso();
   }, [messages]);
 
   useEffect(() => {
-    // 1. NUOVO: Appena apro la chat, chiedo al backend gli ultimi 150 messaggi
+    //  Appena apro la chat, chiedo al backend gli ultimi 150 messaggi
     const caricaStorico = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/messages`);
@@ -41,14 +41,14 @@ function ChatBox() {
     };
 
     caricaStorico(); // Eseguo la funzione. Quando si apre la pagina, 
-    // la funzione caricaStorico scatta per prima. 
-    // Bussa alla nuova rotta /api/messages del server Node, 
-    // si fa dare la lista dei vecchi messaggi da MongoDB e li stampa a schermo.
-    //  Poi, Socket.io prende aggiunge in tempo reale
-    //  i messaggi nuovi che si scrivono
+      // la funzione caricaStorico scatta per prima. 
+      // Bussa alla nuova rotta /api/messages del server Node, 
+      // si fa dare la lista dei vecchi messaggi da MongoDB e li stampa a schermo.
+      //  Poi, Socket.io prende aggiunge in tempo reale
+      //  i messaggi nuovi che si scrivono
 
     if (user) {
-      socket.emit('imposta_username', user.username);
+      socket.emit('imposta_username', user.username);// mi connetto all'evento dando username
     }
 
     socket.on('ricevi_messaggio', (nuovoMessaggio) => {
@@ -67,9 +67,9 @@ function ChatBox() {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (!chatMessage) return;
+    if (!chatMessage) return;//callback in cui prendo le informazioni e blocco il ricaricamento
 
-    // Usiamo il VERO nome utente al posto di "Io"!
+    //  nome utente
     const datiMessaggio = {
       username: username, 
       testo: chatMessage

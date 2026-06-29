@@ -7,7 +7,7 @@ export const AuthContext = createContext();//creo la scatola vuota.
 
 // Creiamo il Provider (il guscio che conterrà i dati).
 // È il componente che fa da "Gestore" della scatola.
-// Prende tutti gli altri componenti della tua app (i children, cioè le tue pagine) e
+// Prende tutti gli altri componenti della tua app (i children, cioè le pagine) e
 // li avvolge, facendoli vivere al suo interno 
 // user ricorda chi è connesso in questo momento.
 // loading è un interruttore di sicurezza: non fa caricare le pagine finché non si ha controllato se l'utente ha già fatto l'accesso in passato
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
 
   // Funzione globale per fare il Login
   const loginGlobal = (token) => {
-    localStorage.setItem('token', token);
+    localStorage.setItem('token', token);//salva il token dentro il browser e permettere di rimanere loggato anche se si refresha
     const decoded = jwtDecode(token);
     setUser(decoded);
   };
